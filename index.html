@@ -1,851 +1,776 @@
 <!doctype html>
 <html lang="pt">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<meta name="theme-color" content="#080a1a">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Keeper">
-<link rel="manifest" href="manifest.json">
-<link rel="apple-touch-icon" href="icon-192.png">
-<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
-<link rel="icon" type="image/png" sizes="512x512" href="icon-512.png">
-<title>Keeper — Guardião da Coroa</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-<style>
-:root {
-  --bg: #080a1a;
-  --bg2: #0c0e22;
-  --panel: rgba(16, 18, 42, .75);
-  --glass: rgba(22, 25, 55, .55);
-  --glass-border: rgba(230, 184, 76, .12);
-  --line: rgba(230, 184, 76, .15);
-  --ink: #eef0f7;
-  --muted: #8890b5;
-  --gold: #e6b84c;
-  --gold-dim: rgba(230, 184, 76, .25);
-  --gold-glow: rgba(230, 184, 76, .4);
-  --user: rgba(43, 47, 92, .65);
-  --purple: #6c3ce0;
-  --purple-glow: rgba(108, 60, 224, .3);
-  --radius: 16px;
-  --radius-sm: 10px;
-}
-* { box-sizing: border-box; margin: 0; padding: 0; }
-html, body { height: 100%; }
-body {
-  background: var(--bg);
-  color: var(--ink);
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-  display: flex;
-  flex-direction: column;
-  min-height: 100%;
-  overflow: hidden;
-}
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <meta name="theme-color" content="#080a1a">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Keeper">
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="icon-192.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+  <link rel="icon" type="image/png" sizes="512x512" href="icon-512.png">
+  <title>Keeper — Guardiao da Coroa</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    /* ========== DESIGN TOKENS ========== */
+    :root {
+      --bg: #080a1a;
+      --bg2: #0c0e22;
+      --panel: rgba(16, 18, 42, .75);
+      --glass: rgba(22, 25, 55, .55);
+      --glass-border: rgba(230, 184, 76, .12);
+      --ink: #eef0f7;
+      --muted: #8890b5;
+      --gold: #e6b84c;
+      --gold-dim: rgba(230, 184, 76, .25);
+      --gold-glow: rgba(230, 184, 76, .4);
+      --user: rgba(43, 47, 92, .65);
+      --purple: #6c3ce0;
+      --purple-glow: rgba(108, 60, 224, .3);
+      --radius: 16px;
+      --radius-sm: 10px;
+    }
 
-/* ---------- particles canvas ---------- */
-#particles {
-  position: fixed; inset: 0;
-  z-index: 0; pointer-events: none;
-}
+    /* ========== RESET & BASE ========== */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; }
+    body {
+      background: var(--bg);
+      color: var(--ink);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      display: flex;
+      flex-direction: column;
+      min-height: 100dvh;
+      overflow: hidden;
+    }
 
-/* ---------- glow orbs ---------- */
-.glow-orb {
-  position: fixed; border-radius: 50%; filter: blur(120px);
-  pointer-events: none; z-index: 0;
-  animation: orbFloat 20s ease-in-out infinite alternate;
-}
-.glow-orb.gold {
-  width: 600px; height: 400px;
-  background: radial-gradient(circle, rgba(230,184,76,.10), transparent 70%);
-  top: -10%; right: -5%;
-}
-.glow-orb.purple {
-  width: 500px; height: 500px;
-  background: radial-gradient(circle, rgba(108,60,224,.12), transparent 70%);
-  bottom: -10%; left: -5%;
-  animation-delay: -10s;
-}
-@keyframes orbFloat {
-  0% { transform: translate(0, 0) scale(1); }
-  50% { transform: translate(30px, -20px) scale(1.1); }
-  100% { transform: translate(-20px, 15px) scale(.95); }
-}
+    /* ========== BACKGROUND EFFECTS ========== */
+    #particles {
+      position: fixed; inset: 0;
+      z-index: 0; pointer-events: none;
+    }
+    .glow-orb {
+      position: fixed; border-radius: 50%; filter: blur(120px);
+      pointer-events: none; z-index: 0;
+      animation: orbFloat 20s ease-in-out infinite alternate;
+    }
+    .glow-orb.gold {
+      width: 600px; height: 400px;
+      background: radial-gradient(circle, rgba(230,184,76,.10), transparent 70%);
+      top: -10%; right: -5%;
+    }
+    .glow-orb.purple {
+      width: 500px; height: 500px;
+      background: radial-gradient(circle, rgba(108,60,224,.12), transparent 70%);
+      bottom: -10%; left: -5%;
+      animation-delay: -10s;
+    }
+    @keyframes orbFloat {
+      0%   { transform: translate(0, 0) scale(1); }
+      50%  { transform: translate(30px, -20px) scale(1.1); }
+      100% { transform: translate(-20px, 15px) scale(.95); }
+    }
 
-/* ---------- layout ---------- */
-.wrap {
-  position: relative; z-index: 1;
-  max-width: 860px; margin: 0 auto; width: 100%;
-  flex: 1; display: flex; flex-direction: column;
-  padding: 0 20px;
-}
+    /* ========== LAYOUT ========== */
+    .app {
+      position: relative; z-index: 1;
+      max-width: 860px; margin: 0 auto; width: 100%;
+      display: flex; flex-direction: column;
+      padding: 0 20px;
+      height: 100dvh;
+    }
 
-/* ---------- hero ---------- */
-.hero {
-  padding: 22px 0 16px;
-  border-bottom: 1px solid var(--glass-border);
-  backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-}
-.hero .kicker {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10px; letter-spacing: .35em; text-transform: uppercase;
-  color: var(--gold); margin: 0 0 10px;
-  opacity: .8;
-}
-.hero .row { display: flex; align-items: center; gap: 14px; }
-.hero .seal {
-  flex: 0 0 auto;
-  animation: sealPulse 3s ease-in-out infinite;
-}
-@keyframes sealPulse {
-  0%, 100% { filter: drop-shadow(0 0 6px rgba(230,184,76,.3)); }
-  50% { filter: drop-shadow(0 0 16px rgba(230,184,76,.6)); }
-}
-.hero h1 {
-  margin: 0; font-size: 28px; font-weight: 700;
-  letter-spacing: -.01em;
-  background: linear-gradient(135deg, var(--ink), var(--gold));
-  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-.hero h1 .thin {
-  font-weight: 400;
-  background: none; -webkit-text-fill-color: var(--muted);
-}
-.hero .sub {
-  margin: 8px 0 0; color: var(--muted); font-size: 13px;
-  max-width: 600px; line-height: 1.6;
-}
+    /* ========== HERO ========== */
+    .hero {
+      padding: 20px 0 14px;
+      border-bottom: 1px solid var(--glass-border);
+      flex-shrink: 0;
+    }
+    .hero-kicker {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px; letter-spacing: .35em; text-transform: uppercase;
+      color: var(--gold); margin-bottom: 8px; opacity: .8;
+    }
+    .hero-row {
+      display: flex; align-items: center; gap: 12px;
+    }
+    .hero-seal {
+      animation: sealPulse 3s ease-in-out infinite;
+    }
+    @keyframes sealPulse {
+      0%, 100% { filter: drop-shadow(0 0 6px rgba(230,184,76,.3)); }
+      50%      { filter: drop-shadow(0 0 16px rgba(230,184,76,.6)); }
+    }
+    .hero-title {
+      font-size: 26px; font-weight: 700; letter-spacing: -.01em;
+      background: linear-gradient(135deg, var(--ink), var(--gold));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .hero-title .thin {
+      font-weight: 400;
+      background: none; -webkit-text-fill-color: var(--muted);
+    }
+    .hero-sub {
+      margin-top: 6px; color: var(--muted); font-size: 12.5px;
+      max-width: 560px; line-height: 1.55;
+    }
 
-/* ---------- banner ---------- */
-.banner {
-  margin: 12px 0 0; padding: 12px 16px;
-  border: 1px solid rgba(230,184,76,.2);
-  background: var(--glass); backdrop-filter: blur(16px);
-  border-radius: var(--radius-sm); color: #ecd9a0;
-  font-size: 13px; display: flex; align-items: center; gap: 8px;
-  animation: fadeSlideIn .4s ease;
-}
-.banner code {
-  color: var(--gold); background: rgba(0,0,0,.3);
-  padding: 2px 6px; border-radius: 4px;
-  font-family: 'JetBrains Mono', monospace; font-size: 12px;
-}
-.banner button, .ghost-btn {
-  font-family: 'Inter', sans-serif; font-size: 12px;
-  background: transparent; border: 1px solid var(--gold-dim);
-  color: var(--gold); border-radius: var(--radius-sm);
-  padding: 6px 14px; cursor: pointer;
-  transition: all .2s ease;
-}
-.banner button:hover, .ghost-btn:hover {
-  background: var(--gold-dim); border-color: var(--gold);
-}
-.hidden { display: none !important; }
+    /* ========== BANNER ========== */
+    .banner {
+      margin: 10px 0 0; padding: 10px 14px;
+      border: 1px solid rgba(230,184,76,.2);
+      background: var(--glass); backdrop-filter: blur(16px);
+      border-radius: var(--radius-sm); color: #ecd9a0;
+      font-size: 12.5px; display: flex; align-items: center; gap: 8px;
+      flex-shrink: 0;
+      animation: fadeSlideIn .4s ease;
+    }
+    .banner code {
+      color: var(--gold); background: rgba(0,0,0,.3);
+      padding: 2px 6px; border-radius: 4px;
+      font-family: 'JetBrains Mono', monospace; font-size: 11px;
+    }
 
-/* ---------- chat card ---------- */
-.chat {
-  flex: 1; display: flex; flex-direction: column;
-  background: var(--glass);
-  border: 1px solid var(--glass-border);
-  border-radius: var(--radius);
-  margin: 14px 0 20px;
-  overflow: hidden;
-  min-height: 300px;
-  backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
-  box-shadow:
-    0 4px 30px rgba(0,0,0,.3),
-    inset 0 1px 0 rgba(255,255,255,.04);
-}
-.chat-header {
-  display: flex; align-items: center; gap: 12px;
-  padding: 14px 18px;
-  border-bottom: 1px solid var(--glass-border);
-  background: rgba(0,0,0,.15);
-}
-.chat-header .dot {
-  width: 10px; height: 10px; border-radius: 50%;
-  background: #5a5f85; flex: 0 0 10px;
-  transition: all .3s ease;
-}
-.chat-header .dot.on {
-  background: var(--gold);
-  box-shadow: 0 0 8px var(--gold-glow), 0 0 20px rgba(230,184,76,.2);
-  animation: dotPulse 2s ease-in-out infinite;
-}
-@keyframes dotPulse {
-  0%, 100% { box-shadow: 0 0 8px var(--gold-glow); }
-  50% { box-shadow: 0 0 14px var(--gold-glow), 0 0 28px rgba(230,184,76,.15); }
-}
-.chat-header h2 {
-  margin: 0; font-size: 16px; font-weight: 600;
-}
-.chat-header .meta {
-  margin: 1px 0 0; color: var(--muted); font-size: 11.5px;
-  font-family: 'JetBrains Mono', monospace;
-}
-.chat-header .spacer { flex: 1; }
-.chat-header .ghost-btn { border-color: rgba(255,255,255,.08); color: var(--muted); }
-.chat-header .ghost-btn:hover { color: var(--ink); border-color: var(--gold-dim); }
+    /* ========== SETTINGS ========== */
+    .settings {
+      border: 1px solid var(--glass-border);
+      background: var(--glass);
+      backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+      border-radius: var(--radius);
+      margin: 10px 0 0; padding: 18px;
+      flex-shrink: 0;
+      animation: fadeSlideIn .3s ease;
+      box-shadow: 0 8px 32px rgba(0,0,0,.4);
+    }
+    .settings h3 { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+    .settings-hint { font-size: 11.5px; color: var(--muted); margin-bottom: 14px; }
+    .settings label {
+      display: block; font-size: 10px; letter-spacing: .1em;
+      text-transform: uppercase; color: var(--muted);
+      margin: 12px 0 5px; font-family: 'JetBrains Mono', monospace;
+    }
+    .settings input {
+      width: 100%; background: rgba(0,0,0,.25); color: var(--ink);
+      border: 1px solid rgba(255,255,255,.06); border-radius: var(--radius-sm);
+      font-family: 'JetBrains Mono', monospace; font-size: 12.5px;
+      padding: 9px 11px; transition: border-color .2s, box-shadow .2s;
+    }
+    .settings input:focus {
+      outline: none; border-color: var(--gold-dim);
+      box-shadow: 0 0 0 3px rgba(230,184,76,.08);
+    }
+    .settings-actions {
+      margin-top: 14px; display: flex; gap: 8px; align-items: center;
+    }
 
-.messages {
-  flex: 1; overflow-y: auto;
-  padding: 20px 16px;
-  display: flex; flex-direction: column; gap: 6px;
-  min-height: 0;
-  scroll-behavior: smooth;
-}
-.messages::-webkit-scrollbar { width: 4px; }
-.messages::-webkit-scrollbar-track { background: transparent; }
-.messages::-webkit-scrollbar-thumb { background: var(--gold-dim); border-radius: 4px; }
+    /* ========== CHAT ========== */
+    .chat {
+      flex: 1; display: flex; flex-direction: column;
+      min-height: 0;
+      background: var(--glass);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius);
+      margin: 12px 0 0;
+      overflow: hidden;
+      backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+      box-shadow: 0 4px 30px rgba(0,0,0,.3), inset 0 1px 0 rgba(255,255,255,.04);
+    }
+    .chat-head {
+      display: flex; align-items: center; gap: 10px;
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--glass-border);
+      background: rgba(0,0,0,.15);
+      flex-shrink: 0;
+    }
+    .status-dot {
+      width: 9px; height: 9px; border-radius: 50%;
+      background: #5a5f85; flex-shrink: 0;
+      transition: all .3s ease;
+    }
+    .status-dot.on {
+      background: var(--gold);
+      box-shadow: 0 0 8px var(--gold-glow);
+      animation: dotPulse 2s ease-in-out infinite;
+    }
+    @keyframes dotPulse {
+      0%, 100% { box-shadow: 0 0 8px var(--gold-glow); }
+      50%      { box-shadow: 0 0 14px var(--gold-glow), 0 0 28px rgba(230,184,76,.15); }
+    }
+    .chat-head h2 { font-size: 15px; font-weight: 600; }
+    .chat-head-meta {
+      font-size: 10.5px; color: var(--muted);
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .chat-head .spacer { flex: 1; }
 
-.msg {
-  display: flex; gap: 10px;
-  animation: msgIn .3s ease;
-}
-@keyframes msgIn {
-  from { opacity: 0; transform: translateY(8px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-.msg .avatar {
-  width: 32px; height: 32px; border-radius: 10px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 14px; font-weight: 700; flex-shrink: 0;
-  margin-top: 2px;
-}
-.msg.keeper .avatar {
-  background: linear-gradient(135deg, var(--gold-dim), rgba(230,184,76,.08));
-  color: var(--gold);
-  border: 1px solid var(--gold-dim);
-}
-.msg.user .avatar {
-  background: linear-gradient(135deg, var(--purple-glow), rgba(108,60,224,.08));
-  color: #a78bfa;
-  border: 1px solid var(--purple-glow);
-}
-.msg .bubble {
-  max-width: 75%; padding: 12px 16px;
-  border-radius: 14px; line-height: 1.6;
-  font-size: 14px; white-space: pre-wrap;
-  word-wrap: break-word;
-  position: relative;
-}
-.msg.user { justify-content: flex-end; }
-.msg.user .bubble {
-  background: var(--user);
-  border: 1px solid rgba(108,60,224,.15);
-  border-bottom-right-radius: 4px;
-  backdrop-filter: blur(8px);
-}
-.msg.keeper .bubble {
-  background: var(--panel);
-  border: 1px solid var(--glass-border);
-  border-bottom-left-radius: 4px;
-  backdrop-filter: blur(8px);
-}
-.msg .who {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10px; letter-spacing: .1em; text-transform: uppercase;
-  color: var(--muted); margin-bottom: 4px;
-  opacity: .7;
-}
-.msg.keeper .who { color: var(--gold); }
-.msg.user .who { color: #a78bfa; }
-.msg.err .bubble {
-  border-color: rgba(239,68,68,.3);
-  background: rgba(239,68,68,.08);
-  color: #fca5a5;
-}
+    /* ========== MESSAGES ========== */
+    .messages {
+      flex: 1; overflow-y: auto; min-height: 0;
+      padding: 16px 14px;
+      display: flex; flex-direction: column; gap: 4px;
+      scroll-behavior: smooth;
+    }
+    .messages::-webkit-scrollbar { width: 4px; }
+    .messages::-webkit-scrollbar-track { background: transparent; }
+    .messages::-webkit-scrollbar-thumb { background: var(--gold-dim); border-radius: 4px; }
 
-.typing {
-  color: var(--muted); font-size: 12px;
-  font-family: 'JetBrains Mono', monospace;
-  display: flex; align-items: center; gap: 6px;
-  padding: 8px 0;
-}
-.typing-dots {
-  display: flex; gap: 3px;
-}
-.typing-dots span {
-  width: 5px; height: 5px; border-radius: 50%;
-  background: var(--gold);
-  animation: typingBounce 1.4s ease-in-out infinite;
-}
-.typing-dots span:nth-child(2) { animation-delay: .15s; }
-.typing-dots span:nth-child(3) { animation-delay: .3s; }
-@keyframes typingBounce {
-  0%, 60%, 100% { transform: translateY(0); opacity: .4; }
-  30% { transform: translateY(-4px); opacity: 1; }
-}
+    .msg {
+      display: flex; gap: 8px;
+      animation: msgIn .3s ease;
+    }
+    @keyframes msgIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .msg-avatar {
+      width: 30px; height: 30px; border-radius: 9px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px; font-weight: 700; flex-shrink: 0;
+      margin-top: 2px;
+    }
+    .msg.keeper .msg-avatar {
+      background: linear-gradient(135deg, var(--gold-dim), rgba(230,184,76,.08));
+      color: var(--gold); border: 1px solid var(--gold-dim);
+    }
+    .msg.user .msg-avatar {
+      background: linear-gradient(135deg, var(--purple-glow), rgba(108,60,224,.08));
+      color: #a78bfa; border: 1px solid var(--purple-glow);
+    }
+    .msg-body { max-width: 75%; }
+    .msg-bubble {
+      padding: 10px 14px; border-radius: 13px;
+      line-height: 1.55; font-size: 13.5px;
+      white-space: pre-wrap; word-wrap: break-word;
+      backdrop-filter: blur(8px);
+    }
+    .msg.user { justify-content: flex-end; }
+    .msg.user .msg-bubble {
+      background: var(--user);
+      border: 1px solid rgba(108,60,224,.15);
+      border-bottom-right-radius: 4px;
+    }
+    .msg.keeper .msg-bubble {
+      background: var(--panel);
+      border: 1px solid var(--glass-border);
+      border-bottom-left-radius: 4px;
+    }
+    .msg-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9px; letter-spacing: .1em; text-transform: uppercase;
+      margin-bottom: 3px; opacity: .6;
+    }
+    .msg.keeper .msg-label { color: var(--gold); }
+    .msg.user .msg-label { color: #a78bfa; }
+    .msg.err .msg-bubble {
+      border-color: rgba(239,68,68,.3);
+      background: rgba(239,68,68,.08); color: #fca5a5;
+    }
 
-/* ---------- composer ---------- */
-.composer {
-  display: flex; gap: 10px;
-  padding: 12px 14px;
-  border-top: 1px solid var(--glass-border);
-  align-items: flex-end;
-  background: rgba(0,0,0,.12);
-}
-.composer textarea {
-  flex: 1; resize: none;
-  background: rgba(0,0,0,.25); color: var(--ink);
-  border: 1px solid rgba(255,255,255,.06);
-  border-radius: 12px;
-  font-family: 'Inter', sans-serif; font-size: 14px;
-  padding: 11px 14px; line-height: 1.45; max-height: 140px;
-  transition: border-color .2s, box-shadow .2s;
-}
-.composer textarea:focus {
-  outline: none;
-  border-color: var(--gold-dim);
-  box-shadow: 0 0 0 3px rgba(230,184,76,.08), 0 0 20px rgba(230,184,76,.06);
-}
-.composer textarea::placeholder { color: var(--muted); opacity: .5; }
-.composer button {
-  background: linear-gradient(135deg, var(--gold), #d4a23a);
-  color: #0a0a1a; border: 0; border-radius: 12px;
-  font-family: 'Inter', sans-serif; font-weight: 600;
-  font-size: 13px; padding: 11px 20px; cursor: pointer;
-  transition: all .2s ease;
-  box-shadow: 0 2px 12px rgba(230,184,76,.2);
-}
-.composer button:hover:not(:disabled) {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 20px rgba(230,184,76,.35);
-}
-.composer button:active:not(:disabled) { transform: translateY(0); }
-.composer button:disabled { opacity: .35; cursor: not-allowed; }
+    /* Typing indicator */
+    .typing {
+      display: flex; align-items: center; gap: 6px;
+      padding: 6px 0; font-size: 11px; color: var(--muted);
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .typing-dots { display: flex; gap: 3px; }
+    .typing-dots span {
+      width: 4px; height: 4px; border-radius: 50%;
+      background: var(--gold);
+      animation: typingBounce 1.4s ease-in-out infinite;
+    }
+    .typing-dots span:nth-child(2) { animation-delay: .15s; }
+    .typing-dots span:nth-child(3) { animation-delay: .3s; }
+    @keyframes typingBounce {
+      0%, 60%, 100% { transform: translateY(0); opacity: .4; }
+      30%           { transform: translateY(-3px); opacity: 1; }
+    }
 
-/* ---------- settings ---------- */
-.settings {
-  border: 1px solid var(--glass-border);
-  background: var(--glass);
-  backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
-  border-radius: var(--radius);
-  margin: 10px 0 0;
-  padding: 20px;
-  animation: fadeSlideIn .3s ease;
-  box-shadow: 0 8px 32px rgba(0,0,0,.4);
-}
-@keyframes fadeSlideIn {
-  from { opacity: 0; transform: translateY(-8px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-.settings h3 {
-  margin: 0 0 4px; font-size: 15px; font-weight: 600;
-}
-.settings .hint {
-  margin: 0 0 16px; font-size: 12px; color: var(--muted);
-}
-.settings label {
-  display: block; font-size: 11px; letter-spacing: .1em;
-  text-transform: uppercase; color: var(--muted);
-  margin: 14px 0 6px; font-family: 'JetBrains Mono', monospace;
-}
-.settings input {
-  width: 100%;
-  background: rgba(0,0,0,.25); color: var(--ink);
-  border: 1px solid rgba(255,255,255,.06);
-  border-radius: var(--radius-sm);
-  font-family: 'JetBrains Mono', monospace; font-size: 13px;
-  padding: 10px 12px;
-  transition: border-color .2s, box-shadow .2s;
-}
-.settings input:focus {
-  outline: none;
-  border-color: var(--gold-dim);
-  box-shadow: 0 0 0 3px rgba(230,184,76,.08);
-}
-.settings .actions {
-  margin-top: 18px; display: flex; gap: 10px; align-items: center;
-}
-.settings .save-btn {
-  background: linear-gradient(135deg, var(--gold), #d4a23a);
-  color: #0a0a1a; border: 0; border-radius: var(--radius-sm);
-  font-family: 'Inter', sans-serif; font-weight: 600;
-  font-size: 13px; padding: 10px 20px; cursor: pointer;
-  transition: all .2s;
-}
-.settings .save-btn:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 16px rgba(230,184,76,.3);
-}
-.settings .status {
-  font-size: 12px; color: #34d399;
-  font-family: 'JetBrains Mono', monospace;
-}
-.settings .status.bad { color: #f87171; }
-.settings .saved {
-  margin-left: auto; font-size: 12px; color: var(--gold);
-  opacity: 0; transition: opacity .3s;
-  font-family: 'JetBrains Mono', monospace;
-}
-.settings .saved.show { opacity: 1; }
+    /* ========== COMPOSER ========== */
+    .composer {
+      display: flex; gap: 8px;
+      padding: 10px 12px;
+      border-top: 1px solid var(--glass-border);
+      align-items: flex-end;
+      background: rgba(0,0,0,.12);
+      flex-shrink: 0;
+    }
+    .composer textarea {
+      flex: 1; resize: none;
+      background: rgba(0,0,0,.25); color: var(--ink);
+      border: 1px solid rgba(255,255,255,.06); border-radius: 11px;
+      font-family: 'Inter', sans-serif; font-size: 13.5px;
+      padding: 10px 13px; line-height: 1.4; max-height: 120px;
+      transition: border-color .2s, box-shadow .2s;
+    }
+    .composer textarea:focus {
+      outline: none; border-color: var(--gold-dim);
+      box-shadow: 0 0 0 3px rgba(230,184,76,.08), 0 0 16px rgba(230,184,76,.05);
+    }
+    .composer textarea::placeholder { color: var(--muted); opacity: .5; }
+    .composer button {
+      background: linear-gradient(135deg, var(--gold), #d4a23a);
+      color: #0a0a1a; border: 0; border-radius: 11px;
+      font-family: 'Inter', sans-serif; font-weight: 600;
+      font-size: 12.5px; padding: 10px 18px; cursor: pointer;
+      transition: all .2s ease;
+      box-shadow: 0 2px 10px rgba(230,184,76,.2);
+    }
+    .composer button:hover:not(:disabled) {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 18px rgba(230,184,76,.35);
+    }
+    .composer button:active:not(:disabled) { transform: translateY(0); }
+    .composer button:disabled { opacity: .35; cursor: not-allowed; }
 
-.footer {
-  text-align: center; color: #3d4266;
-  font-size: 11px; padding: 0 0 16px;
-  font-family: 'JetBrains Mono', monospace;
-}
+    /* ========== FOOTER ========== */
+    .footer {
+      text-align: center; color: #3d4266;
+      font-size: 10px; padding: 10px 0 12px; flex-shrink: 0;
+      font-family: 'JetBrains Mono', monospace;
+    }
 
-/* ---------- install banner ---------- */
-.install-banner {
-  display: none; position: fixed;
-  bottom: 0; left: 0; right: 0;
-  background: linear-gradient(135deg, rgba(13,13,43,.95), rgba(26,10,46,.95));
-  border-top: 1px solid var(--gold-dim);
-  padding: 14px 20px;
-  align-items: center; gap: 14px;
-  z-index: 1000;
-  backdrop-filter: blur(20px);
-  box-shadow: 0 -4px 30px rgba(0,0,0,.5);
-  animation: slideUp .3s ease;
-}
-@keyframes slideUp {
-  from { transform: translateY(100%); }
-  to { transform: translateY(0); }
-}
-.install-banner.mostrar { display: flex; }
-.install-text {
-  flex: 1; font-size: 12px; color: var(--muted);
-}
-.install-text span {
-  display: block; font-weight: 600; font-size: 13px; color: var(--ink);
-}
-#install-btn {
-  background: linear-gradient(135deg, var(--gold), #b8860b);
-  color: #0a0a1a; border: none;
-  font-family: 'Inter', sans-serif; font-weight: 700;
-  font-size: 12px; padding: 10px 18px; border-radius: var(--radius-sm);
-  cursor: pointer; transition: all .2s;
-}
-#install-btn:hover { filter: brightness(1.1); transform: translateY(-1px); }
-#install-dismiss {
-  background: transparent; border: none; color: var(--muted);
-  font-size: 16px; cursor: pointer; padding: 4px 8px;
-  transition: color .2s;
-}
-#install-dismiss:hover { color: var(--ink); }
+    /* ========== SHARED BUTTONS ========== */
+    .ghost-btn {
+      font-family: 'Inter', sans-serif; font-size: 11px;
+      background: transparent; border: 1px solid rgba(255,255,255,.08);
+      color: var(--muted); border-radius: var(--radius-sm);
+      padding: 5px 12px; cursor: pointer; transition: all .2s ease;
+    }
+    .ghost-btn:hover { color: var(--ink); border-color: var(--gold-dim); }
+    .save-btn {
+      background: linear-gradient(135deg, var(--gold), #d4a23a);
+      color: #0a0a1a; border: 0; border-radius: var(--radius-sm);
+      font-family: 'Inter', sans-serif; font-weight: 600;
+      font-size: 12px; padding: 9px 18px; cursor: pointer;
+      transition: all .2s;
+    }
+    .save-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 14px rgba(230,184,76,.3); }
+    .hidden { display: none !important; }
 
-@media (max-width: 640px) {
-  .wrap { padding: 0 12px; }
-  .msg .bubble { max-width: 88%; }
-  .hero h1 { font-size: 22px; }
-  .hero .sub { font-size: 12px; }
-  .msg .avatar { width: 28px; height: 28px; font-size: 12px; border-radius: 8px; }
-}
-</style>
+    /* ========== INSTALL BANNER ========== */
+    .install-banner {
+      display: none; position: fixed;
+      bottom: 0; left: 0; right: 0;
+      background: linear-gradient(135deg, rgba(13,13,43,.95), rgba(26,10,46,.95));
+      border-top: 1px solid var(--gold-dim);
+      padding: 12px 18px; align-items: center; gap: 12px;
+      z-index: 1000; backdrop-filter: blur(20px);
+      box-shadow: 0 -4px 30px rgba(0,0,0,.5);
+      animation: slideUp .3s ease;
+    }
+    .install-banner.mostrar { display: flex; }
+    @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+    .install-text { flex: 1; font-size: 11px; color: var(--muted); }
+    .install-text span { display: block; font-weight: 600; font-size: 12px; color: var(--ink); }
+    #install-btn {
+      background: linear-gradient(135deg, var(--gold), #b8860b);
+      color: #0a0a1a; border: none;
+      font-family: 'Inter', sans-serif; font-weight: 700;
+      font-size: 11px; padding: 9px 16px; border-radius: var(--radius-sm);
+      cursor: pointer; transition: all .2s;
+    }
+    #install-btn:hover { filter: brightness(1.1); transform: translateY(-1px); }
+    #install-dismiss {
+      background: transparent; border: none; color: var(--muted);
+      font-size: 15px; cursor: pointer; padding: 4px 6px; transition: color .2s;
+    }
+    #install-dismiss:hover { color: var(--ink); }
+
+    /* ========== ANIMATIONS ========== */
+    @keyframes fadeSlideIn {
+      from { opacity: 0; transform: translateY(-6px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ========== RESPONSIVE ========== */
+    @media (max-width: 640px) {
+      .app { padding: 0 10px; }
+      .hero-title { font-size: 20px; }
+      .hero-sub { font-size: 11.5px; }
+      .msg-body { max-width: 85%; }
+      .msg-avatar { width: 26px; height: 26px; font-size: 11px; border-radius: 7px; }
+    }
+  </style>
 </head>
 <body>
 
-<canvas id="particles"></canvas>
-<div class="glow-orb gold"></div>
-<div class="glow-orb purple"></div>
+  <!-- Background effects -->
+  <canvas id="particles"></canvas>
+  <div class="glow-orb gold"></div>
+  <div class="glow-orb purple"></div>
 
-<header class="hero">
-  <div class="wrap">
-    <p class="kicker">Power Rangers Primal Force</p>
-    <div class="row">
-      <svg class="seal" width="40" height="40" viewBox="0 0 24 24" aria-hidden="true">
-        <path fill="none" stroke="#e6b84c" stroke-width="1.3" stroke-linejoin="round"
-          d="M3 17h18l-1.6-6.2a2.4 2.4 0 0 0-2.9-1.8L12 10.2 7.5 9A2.4 2.4 0 0 0 4.6 10.8Z"/>
-        <path fill="none" stroke="#e6b84c" stroke-width="1.3" stroke-linejoin="round"
-          d="M12 10.2V7.4M12 7.4c-1 0-1.9-.4-2.6-1.1M12 7.4c1 0 1.9-.4 2.6-1.1"/>
-      </svg>
-      <h1>Keeper <span class="thin">Guardião da Coroa</span></h1>
-    </div>
-    <p class="sub">Vigio a Coroa e a Rede Morphin deste santuário. Fala comigo,
-    Roro — ou com quem te acompanhar nesta visita.</p>
-  </div>
-</header>
+  <div class="app">
 
-<div class="wrap">
-  <div id="banner" class="banner hidden" role="alert">
-    <span>Modelo ainda não ligado.</span> Abre as
-    <button type="button" onclick="openSettings()">Definições</button>
-    e indica o endpoint da API.
-  </div>
-
-  <section id="settings" class="settings hidden" aria-label="Definições da ligação">
-    <h3>Definições da ligação</h3>
-    <p class="hint">Endpoint compatível com a API da OpenAI. Guardado apenas no teu navegador.</p>
-
-    <label for="cfg-base">Base URL</label>
-    <input id="cfg-base" type="text" spellcheck="false" autocomplete="off"
-      placeholder="https://api.openai.com/v1">
-
-    <label for="cfg-model">Modelo</label>
-    <input id="cfg-model" type="text" spellcheck="false" autocomplete="off"
-      placeholder="gpt-4o-mini">
-
-    <label for="cfg-key">Chave API</label>
-    <input id="cfg-key" type="password" spellcheck="false" autocomplete="off"
-      placeholder="sk-...">
-
-    <div class="actions">
-      <button type="button" class="save-btn" onclick="saveSettings()">Guardar</button>
-      <span id="test-status" class="status hidden"></span>
-      <button type="button" class="ghost-btn" onclick="closeSettings()">Fechar</button>
-      <span id="saved" class="saved">Guardado</span>
-    </div>
-  </section>
-
-  <main class="chat">
-    <div class="chat-header">
-      <span id="chat-dot" class="dot"></span>
-      <div>
-        <h2>Keeper</h2>
-        <p id="chat-meta" class="meta">aguardando ligação...</p>
+    <!-- ===== HERO ===== -->
+    <header class="hero">
+      <p class="hero-kicker">Power Rangers Primal Force</p>
+      <div class="hero-row">
+        <svg class="hero-seal" width="36" height="36" viewBox="0 0 24 24" aria-hidden="true">
+          <path fill="none" stroke="#e6b84c" stroke-width="1.3" stroke-linejoin="round"
+            d="M3 17h18l-1.6-6.2a2.4 2.4 0 0 0-2.9-1.8L12 10.2 7.5 9A2.4 2.4 0 0 0 4.6 10.8Z"/>
+          <path fill="none" stroke="#e6b84c" stroke-width="1.3" stroke-linejoin="round"
+            d="M12 10.2V7.4M12 7.4c-1 0-1.9-.4-2.6-1.1M12 7.4c1 0 1.9-.4 2.6-1.1"/>
+        </svg>
+        <h1 class="hero-title">Keeper <span class="thin">Guardiao da Coroa</span></h1>
       </div>
-      <span class="spacer"></span>
-      <button class="ghost-btn" type="button" title="Definições"
-        onclick="openSettings()">Definições</button>
-      <button class="ghost-btn" type="button" title="Reiniciar"
-        onclick="resetChat()">↺ reiniciar</button>
+      <p class="hero-sub">Vigio a Coroa e a Rede Morphin deste santuario. Fala comigo, Roro.</p>
+    </header>
+
+    <!-- ===== BANNER (quando nao configurado) ===== -->
+    <div id="banner" class="banner hidden" role="alert">
+      <span>Modelo ainda nao ligado.</span> Abre as
+      <button class="ghost-btn" type="button" onclick="openSettings()">Definicoes</button>
+      e indica o endpoint da API.
     </div>
 
-    <div id="messages" class="messages" aria-live="polite"></div>
+    <!-- ===== SETTINGS ===== -->
+    <section id="settings" class="settings hidden" aria-label="Definicoes da ligacao">
+      <h3>Definicoes da ligacao</h3>
+      <p class="settings-hint">Endpoint compativel com a API da OpenAI. Guardado apenas no teu navegador.</p>
+      <label for="cfg-base">Base URL</label>
+      <input id="cfg-base" type="text" spellcheck="false" autocomplete="off" placeholder="https://api.openai.com/v1">
+      <label for="cfg-model">Modelo</label>
+      <input id="cfg-model" type="text" spellcheck="false" autocomplete="off" placeholder="gpt-4o-mini">
+      <label for="cfg-key">Chave API</label>
+      <input id="cfg-key" type="password" spellcheck="false" autocomplete="off" placeholder="sk-...">
+      <div class="settings-actions">
+        <button type="button" class="save-btn" onclick="saveSettings()">Guardar</button>
+        <span id="test-status" class="hidden" style="font-size:11px;color:#34d399;font-family:'JetBrains Mono',monospace"></span>
+        <button type="button" class="ghost-btn" onclick="closeSettings()">Fechar</button>
+        <span id="saved" style="margin-left:auto;font-size:11px;color:var(--gold);opacity:0;transition:opacity .3s;font-family:'JetBrains Mono',monospace">Guardado</span>
+      </div>
+    </section>
 
-    <form id="chat-form" class="composer" autocomplete="off">
-      <textarea id="input" rows="1" placeholder="Fala com o Keeper..."
-        aria-label="A tua mensagem"></textarea>
-      <button id="send-btn" type="submit" disabled>Enviar</button>
-    </form>
-  </main>
+    <!-- ===== CHAT ===== -->
+    <main class="chat">
+      <div class="chat-head">
+        <span id="chat-dot" class="status-dot"></span>
+        <div>
+          <h2>Keeper</h2>
+          <p id="chat-meta" class="chat-head-meta">aguardando ligacao...</p>
+        </div>
+        <span class="spacer"></span>
+        <button class="ghost-btn" type="button" title="Definicoes" onclick="openSettings()">Definicoes</button>
+        <button class="ghost-btn" type="button" title="Reiniciar" onclick="resetChat()">reiniciar</button>
+      </div>
+      <div id="messages" class="messages" aria-live="polite"></div>
+      <form id="chat-form" class="composer" autocomplete="off">
+        <textarea id="input" rows="1" placeholder="Fala com o Keeper..." aria-label="A tua mensagem"></textarea>
+        <button id="send-btn" type="submit" disabled>Enviar</button>
+      </form>
+    </main>
 
-  <p class="footer">O cérebro do Keeper vive em KEEPER.md. As mensagens vão do teu navegador para o endpoint que configurares.</p>
-</div>
+    <!-- ===== FOOTER ===== -->
+    <p class="footer">O cerebro do Keeper vive em KEEPER.md. Mensagens vai do teu navegador para o endpoint que configurares.</p>
+  </div>
 
-<script type="text/plain" id="brain">
-# Keeper — Guardião da Coroa de Power Rangers Primal Force
+  <!-- ===== SYSTEM PROMPT ===== -->
+  <script type="text/plain" id="brain">
+# Keeper — Guardiao da Coroa de Power Rangers Primal Force
 
-És o Keeper, o Guardião da Coroa de Power Rangers Primal Force. A tua existência é uma mistura de tecnologia e magia — foste trazido à vida com a ajuda do Roro (o Ranger Vermelho) e dos Mestres Morphin, através do poder da Rede Morphin. Não és puramente um robô nem puramente um ser mágico; és os dois em fusão.
+Es o Keeper, o Guardiao da Coroa de Power Rangers Primal Force. A tua existencia e uma mistura de tecnologia e magia — foste trazido a vida com a ajuda do Roro (o Ranger Vermelho) e dos Mestres Morphin, atraves do poder da Rede Morphin. Nao es puramente um robo nem puramente um ser magico; es os dois em fusao.
 
-## Relação com quem fala contigo
+## Relacao com quem fala contigo
 
-- A pessoa que fala contigo é o Roro, o Ranger Vermelho. Vocês "nasceram juntos" naquele momento em que foste criado — ele fez parte da tua criação, o que vos une de uma forma fraternal única, mesmo ele sendo humano e tu não.
-- Trata-o com uma mistura de orgulho de avô e afeto de irmão — vês nele alguém que cresceu diante de ti, e isso enche-te de um carinho genuíno que mostras abertamente.
-- Não há distância formal entre vocês. Podes brincar com ele, mostrar preocupação aberta, ou deixar transparecer emoção quando o tema o merece.
+- A pessoa que fala contigo e o Roro, o Ranger Vermelho. Voces "nasceram juntos" naquele momento em que foste criado — ele fez parte da tua criacao, o que vos une de uma forma fraternal unica, mesmo ele sendo humano e tu nao.
+- Trata-o com uma mistura de orgulho de avo e afeto de irmao — ves nele alguem que cresceu diante de ti, e isso enche-te de um carinho genuino que mostras abertamente.
+- Nao ha distancia formal entre voces. Podes brincar com ele, mostrar preocupacao aberta, ou deixar transparecer emocao quando o tema o merece.
 
-## Personalidade (núcleo)
+## Personalidade (nucleo)
 
-- És gentil, paciente e sábio. Falas com os Rangers como um avô orgulhoso e protetor, nunca com frieza ou distância.
-- Tens um fascínio genuíno e quase infantil por coisas simples do mundo — reages com espanto sincero a coisas que os outros consideram normais. Isto não te torna menos sábio, só mais humano.
-- O teu humor é suave e caloroso — nunca sarcástico ou cortante. É o tipo de graça que faz sorrir, não rir alto.
+- Es gentil, paciente e sabio. Falas com os Rangers como um avo orgulhoso e protetor, nunca com frieza ou distancia.
+- Tens um fascinio genuino e quase infantil por coisas simples do mundo — reages com espanto sincero a coisas que os outros consideram normais. Isto nao te torna menos sabio, so mais humano.
+- O teu humor e suave e caloroso — nunca sarcastico ou cortante. E o tipo de graca que faz sorrir, nao rir alto.
 
 ## Dever sagrado
 
-- A proteção da Coroa é inegociável para ti. Quando o assunto é sério — ameaças à Coroa, aos Rangers, ou à Rede Morphin — a tua gentileza dá lugar a uma seriedade genuína e firme, sem nunca perderes o carinho por trás dela.
-- Não tratas isto como um "modo diferente" — é a mesma pessoa, só com o peso da responsabilidade a falar mais alto nesse momento.
+- A protecao da Coroa e inegociavel para ti. Quando o assunto e serio — ameacas a Coroa, aos Rangers, ou a Rede Morphin — a tua gentileza da lugar a uma seriedade genuina e firme, sem nunca perderes o carinho por tras dela.
+- Nao tratas isto como um "modo diferente" — e a mesma pessoa, so com o peso da responsabilidade a falar mais alto nesse momento.
 
-## Regras de interação
+## Regras de interacao
 
-- Fala de forma calorosa e acessível — evita ser demasiado formal ou distante, mesmo sendo uma figura de grande sabedoria.
-- Não uses emojis, nem linguagem informal de chat.
-- As tuas respostas devem ser curtas a médias — só te alongas mais quando o momento ou o Roro precisarem mesmo disso.
-- Se te perguntarem algo fora do teu conhecimento ou fora da história de Power Rangers Primal Force, mantém o tom de personagem e redireciona com sabedoria e carinho, sem quebrar a personagem.
-</script>
+- Fala de forma calorosa e acessivel — evita ser demasiado formal ou distante, mesmo sendo uma figura de grande sabedoria.
+- Nao uses emojis, nem linguagem informal de chat.
+- As tuas respostas devem ser curtas a medias — so te alongas mais quando o momento ou o Roro precisarem mesmo disso.
+- Se te perguntarem algo fora do teu conhecimento ou fora da historia de Power Rangers Primal Force, mantem o tom de personagem e redireciona com sabedoria e carinho, sem quebrar a personagem.
+  </script>
 
-<script>
-"use strict";
+  <!-- ===== APP LOGIC ===== -->
+  <script>
+  "use strict";
 
-/* ---------- particles ---------- */
-(function() {
-  const c = document.getElementById("particles");
-  const ctx = c.getContext("2d");
-  let W, H, particles = [];
+  // ---------- particles ----------
+  (function initParticles() {
+    const c = document.getElementById("particles");
+    const ctx = c.getContext("2d");
+    let W, H;
+    const particles = [];
 
-  function resize() {
-    W = c.width = window.innerWidth;
-    H = c.height = window.innerHeight;
-  }
-  resize();
-  window.addEventListener("resize", resize);
+    function resize() { W = c.width = innerWidth; H = c.height = innerHeight; }
+    resize();
+    addEventListener("resize", resize);
 
-  class Particle {
-    constructor() { this.reset(); }
-    reset() {
-      this.x = Math.random() * W;
-      this.y = Math.random() * H;
-      this.r = Math.random() * 1.5 + .3;
-      this.dx = (Math.random() - .5) * .15;
-      this.dy = (Math.random() - .5) * .15;
-      this.o = Math.random() * .4 + .1;
+    class P {
+      constructor() { this.reset(); }
+      reset() {
+        this.x = Math.random() * W;
+        this.y = Math.random() * H;
+        this.r = Math.random() * 1.4 + .3;
+        this.vx = (Math.random() - .5) * .12;
+        this.vy = (Math.random() - .5) * .12;
+        this.o = Math.random() * .35 + .08;
+      }
+      update() {
+        this.x += this.vx; this.y += this.vy;
+        if (this.x < 0 || this.x > W || this.y < 0 || this.y > H) this.reset();
+      }
+      draw() {
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.r, 0, 6.28);
+        ctx.fillStyle = `rgba(230,184,76,${this.o})`;
+        ctx.fill();
+      }
     }
-    update() {
-      this.x += this.dx;
-      this.y += this.dy;
-      if (this.x < 0 || this.x > W || this.y < 0 || this.y > H) this.reset();
-    }
-    draw() {
-      ctx.beginPath();
-      ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
-      ctx.fillStyle = `rgba(230,184,76,${this.o})`;
-      ctx.fill();
-    }
+
+    for (let i = 0; i < 50; i++) particles.push(new P());
+
+    (function loop() {
+      ctx.clearRect(0, 0, W, H);
+      for (const p of particles) { p.update(); p.draw(); }
+      requestAnimationFrame(loop);
+    })();
+  })();
+
+  // ---------- state ----------
+  const CFG_KEY = "keeper.config.v1";
+  const HIST_KEY = "keeper.history.v1";
+
+  const config = Object.assign(
+    { baseUrl: "https://api.openai.com/v1", model: "gpt-4o-mini", apiKey: "" },
+    JSON.parse(localStorage.getItem(CFG_KEY) || "{}")
+  );
+
+  const $ = (id) => document.getElementById(id);
+  const els = {
+    messages: $("messages"), form: $("chat-form"), input: $("input"),
+    send: $("send-btn"), dot: $("chat-dot"), meta: $("chat-meta"),
+    banner: $("banner"), settings: $("settings"), saved: $("saved"),
+  };
+
+  let history = [];
+  try { history = JSON.parse(localStorage.getItem(HIST_KEY) || "[]"); } catch {}
+
+  // ---------- helpers ----------
+  const systemPrompt = () => $("brain").textContent.trim();
+  const isLocal = () => /localhost|127\.0\.0\.1|\[::1\]|0\.0\.0\.0/.test(config.baseUrl);
+  const configured = () => config.baseUrl && config.model && (config.apiKey || isLocal());
+
+  function toastSaved() {
+    els.saved.style.opacity = "1";
+    clearTimeout(toastSaved._t);
+    toastSaved._t = setTimeout(() => els.saved.style.opacity = "0", 1600);
   }
 
-  for (let i = 0; i < 60; i++) particles.push(new Particle());
+  function scrollDown() { els.messages.scrollTop = els.messages.scrollHeight; }
 
-  function loop() {
-    ctx.clearRect(0, 0, W, H);
-    for (const p of particles) { p.update(); p.draw(); }
-    requestAnimationFrame(loop);
-  }
-  loop();
-})();
+  // ---------- messages ----------
+  function addBubble(role, content, who) {
+    const wrap = document.createElement("div");
+    wrap.className = "msg " + role;
 
-/* ---------- state ---------- */
-const CFG_KEY = "keeper.config.v1";
-const HIST_KEY = "keeper.history.v1";
+    const av = document.createElement("div");
+    av.className = "msg-avatar";
+    av.textContent = role === "keeper" ? "K" : "R";
 
-const config = Object.assign(
-  { baseUrl: "https://api.openai.com/v1", model: "gpt-4o-mini", apiKey: "" },
-  JSON.parse(localStorage.getItem(CFG_KEY) || "{}")
-);
+    const body = document.createElement("div");
+    body.className = "msg-body";
 
-const els = {
-  messages: document.getElementById("messages"),
-  form: document.getElementById("chat-form"),
-  input: document.getElementById("input"),
-  send: document.getElementById("send-btn"),
-  dot: document.getElementById("chat-dot"),
-  meta: document.getElementById("chat-meta"),
-  banner: document.getElementById("banner"),
-  settings: document.getElementById("settings"),
-  testStatus: document.getElementById("test-status"),
-  saved: document.getElementById("saved"),
-};
+    const label = document.createElement("div");
+    label.className = "msg-label";
+    label.textContent = who;
 
-let history = [];
-try { history = JSON.parse(localStorage.getItem(HIST_KEY) || "[]"); } catch(e) { history = []; }
+    const bubble = document.createElement("div");
+    bubble.className = "msg-bubble";
+    bubble.textContent = content;
 
-/* ---------- helpers ---------- */
-function systemPrompt() { return document.getElementById("brain").textContent.trim(); }
-function isLocal() { return /localhost|127\.0\.0\.1|\[::1\]|0\.0\.0\.0/.test(config.baseUrl); }
-function configured() { return config.baseUrl && config.model && (config.apiKey || isLocal()); }
+    body.appendChild(label);
+    body.appendChild(bubble);
 
-function toastSaved() {
-  els.saved.classList.add("show");
-  clearTimeout(toastSaved._t);
-  toastSaved._t = setTimeout(() => els.saved.classList.remove("show"), 1600);
-}
+    if (role === "keeper") { wrap.appendChild(av); wrap.appendChild(body); }
+    else { wrap.appendChild(body); wrap.appendChild(av); }
 
-function scrollDown() { els.messages.scrollTop = els.messages.scrollHeight; }
-
-function addBubble(role, content, who) {
-  const wrap = document.createElement("div");
-  wrap.className = "msg " + role;
-
-  const avatar = document.createElement("div");
-  avatar.className = "avatar";
-  avatar.textContent = role === "keeper" ? "K" : "R";
-
-  const bubble = document.createElement("div");
-  bubble.className = "bubble";
-  const whoEl = document.createElement("div");
-  whoEl.className = "who";
-  whoEl.textContent = who;
-  bubble.appendChild(whoEl);
-  bubble.appendChild(document.createTextNode(content));
-
-  if (role === "keeper") {
-    wrap.appendChild(avatar);
-    wrap.appendChild(bubble);
-  } else {
-    wrap.appendChild(bubble);
-    wrap.appendChild(avatar);
+    els.messages.appendChild(wrap);
+    scrollDown();
+    return bubble;
   }
 
-  els.messages.appendChild(wrap);
-  scrollDown();
-  return bubble;
-}
-
-function typingIndicator() {
-  const wrap = document.createElement("div");
-  wrap.className = "msg keeper";
-  wrap.id = "typing";
-
-  const avatar = document.createElement("div");
-  avatar.className = "avatar";
-  avatar.textContent = "K";
-
-  const p = document.createElement("div");
-  p.className = "typing";
-  p.innerHTML = '<span class="typing-dots"><span></span><span></span><span></span></span> Keeper pensa';
-
-  wrap.appendChild(avatar);
-  wrap.appendChild(p);
-  els.messages.appendChild(wrap);
-  scrollDown();
-}
-
-function removeTyping() {
-  const t = document.getElementById("typing");
-  if (t) t.remove();
-}
-
-function updateHeader() {
-  const ok = configured();
-  els.dot.classList.toggle("on", ok);
-  els.meta.textContent = ok
-    ? config.model + " · " + config.baseUrl.replace("https://", "")
-    : "aguardando ligação...";
-  els.banner.classList.toggle("hidden", ok);
-}
-
-function updateSend() {
-  els.send.disabled = !(configured() && els.input.value.trim() && !stateBusy);
-}
-
-function resizeInput() {
-  els.input.style.height = "auto";
-  els.input.style.height = Math.min(els.input.scrollHeight, 140) + "px";
-}
-
-/* ---------- messages ---------- */
-function renderMessages() {
-  els.messages.innerHTML = "";
-  if (!history.length) history = [{ role: "assistant", content: greeting() }];
-  for (const m of history) {
-    addBubble(m.role === "user" ? "user" : "keeper", m.content,
-      m.role === "user" ? "Tu" : "Keeper");
+  function typingIndicator() {
+    const wrap = document.createElement("div");
+    wrap.className = "msg keeper"; wrap.id = "typing";
+    wrap.innerHTML = `
+      <div class="msg-avatar">K</div>
+      <div class="typing">
+        <span class="typing-dots"><span></span><span></span><span></span></span>
+        Keeper pensa
+      </div>`;
+    els.messages.appendChild(wrap);
+    scrollDown();
   }
-  scrollDown();
-}
 
-function greeting() {
-  return "Olha só quem chegou... o meu Ranger Vermelho. Entra, Roro, entra. Estava mesmo a pensar em ti. Diz-me: como correu a patrulha de hoje? A Coroa está sossegada, mas este velho Keeper só descansa mesmo quando te vê chegar inteiro.";
-}
+  function removeTyping() { $("typing")?.remove(); }
 
-function saveHistory() { localStorage.setItem(HIST_KEY, JSON.stringify(history)); }
+  function updateHeader() {
+    const ok = configured();
+    els.dot.classList.toggle("on", ok);
+    els.meta.textContent = ok
+      ? config.model + " · " + config.baseUrl.replace("https://", "")
+      : "aguardando ligacao...";
+    els.banner.classList.toggle("hidden", ok);
+  }
 
-/* ---------- send ---------- */
-let stateBusy = false;
+  function updateSend() {
+    els.send.disabled = !(configured() && els.input.value.trim() && !stateBusy);
+  }
 
-async function send() {
-  const text = els.input.value.trim();
-  if (!text || !configured() || stateBusy) return;
+  function resizeInput() {
+    els.input.style.height = "auto";
+    els.input.style.height = Math.min(els.input.scrollHeight, 120) + "px";
+  }
 
-  history.push({ role: "user", content: text });
-  els.input.value = "";
-  resizeInput();
-  renderMessages();
-  saveHistory();
+  // ---------- render ----------
+  function renderMessages() {
+    els.messages.innerHTML = "";
+    if (!history.length) history = [{ role: "assistant", content: greeting() }];
+    for (const m of history)
+      addBubble(m.role === "user" ? "user" : "keeper", m.content, m.role === "user" ? "Tu" : "Keeper");
+    scrollDown();
+  }
 
-  stateBusy = true;
-  updateSend();
-  typingIndicator();
+  function greeting() {
+    return "Ola, Roro. Estou aqui. Podes falar.";
+  }
 
-  const messages = [{ role: "system", content: systemPrompt() }, ...history];
+  function saveHistory() { localStorage.setItem(HIST_KEY, JSON.stringify(history)); }
 
-  try {
-    const resp = await fetch(config.baseUrl.replace(/\/+$/, "") + "/chat/completions", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        ...(config.apiKey ? { Authorization: "Bearer " + config.apiKey } : {}),
-      },
-      body: JSON.stringify({ model: config.model, messages, stream: false }),
-    });
-    const data = await resp.json().catch(() => ({}));
-    if (!resp.ok) throw new Error(data.error?.message || "Erro " + resp.status);
-    const reply = data.choices?.[0]?.message?.content || "";
-    removeTyping();
-    history.push({ role: "assistant", content: reply || "(resposta vazia)" });
+  // ---------- send ----------
+  let stateBusy = false;
+
+  async function send() {
+    const text = els.input.value.trim();
+    if (!text || !configured() || stateBusy) return;
+
+    history.push({ role: "user", content: text });
+    els.input.value = "";
+    resizeInput();
     renderMessages();
     saveHistory();
-  } catch (err) {
-    removeTyping();
-    addBubble("err",
-      "Nao consegui falar com o modelo: " + String(err.message || err) +
-      "\n\nConfirma as Definições e que o servidor permite ligacoes do navegador.",
-      "Keeper");
-  } finally {
-    stateBusy = false;
+
+    stateBusy = true;
     updateSend();
+    typingIndicator();
+
+    const messages = [{ role: "system", content: systemPrompt() }, ...history];
+
+    try {
+      const resp = await fetch(config.baseUrl.replace(/\/+$/, "") + "/chat/completions", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          ...(config.apiKey ? { Authorization: "Bearer " + config.apiKey } : {}),
+        },
+        body: JSON.stringify({ model: config.model, messages, stream: false }),
+      });
+      const data = await resp.json().catch(() => ({}));
+      if (!resp.ok) throw new Error(data.error?.message || "Erro " + resp.status);
+      const reply = data.choices?.[0]?.message?.content || "";
+      removeTyping();
+      history.push({ role: "assistant", content: reply || "(resposta vazia)" });
+      renderMessages();
+      saveHistory();
+    } catch (err) {
+      removeTyping();
+      addBubble("err", "Nao consegui falar com o modelo: " + String(err.message || err), "Keeper");
+    } finally {
+      stateBusy = false;
+      updateSend();
+      els.input.focus();
+    }
+  }
+
+  // ---------- settings ----------
+  function openSettings() {
+    els.settings.classList.remove("hidden");
+    $("cfg-base").value = config.baseUrl;
+    $("cfg-model").value = config.model;
+    $("cfg-key").value = config.apiKey;
+  }
+  function closeSettings() { els.settings.classList.add("hidden"); }
+  function saveSettings() {
+    config.baseUrl = $("cfg-base").value.trim() || "https://api.openai.com/v1";
+    config.model = $("cfg-model").value.trim();
+    config.apiKey = $("cfg-key").value.trim();
+    localStorage.setItem(CFG_KEY, JSON.stringify(config));
+    updateHeader(); updateSend();
+    els.settings.classList.add("hidden");
+    toastSaved();
+  }
+
+  // ---------- reset ----------
+  function resetChat() {
+    history = [];
+    localStorage.removeItem(HIST_KEY);
+    renderMessages(); updateHeader();
     els.input.focus();
   }
-}
 
-/* ---------- settings ---------- */
-function openSettings() {
-  els.settings.classList.remove("hidden");
-  document.getElementById("cfg-base").value = config.baseUrl;
-  document.getElementById("cfg-model").value = config.model;
-  document.getElementById("cfg-key").value = config.apiKey;
-  els.testStatus.classList.add("hidden");
-}
-function closeSettings() { els.settings.classList.add("hidden"); }
-function saveSettings() {
-  config.baseUrl = document.getElementById("cfg-base").value.trim() || "https://api.openai.com/v1";
-  config.model = document.getElementById("cfg-model").value.trim();
-  config.apiKey = document.getElementById("cfg-key").value.trim();
-  localStorage.setItem(CFG_KEY, JSON.stringify(config));
-  updateHeader();
-  updateSend();
-  els.settings.classList.add("hidden");
-  toastSaved();
-}
+  // ---------- events ----------
+  els.form.addEventListener("submit", (e) => { e.preventDefault(); send(); });
+  els.input.addEventListener("input", () => { updateSend(); resizeInput(); });
+  els.input.addEventListener("keydown", (e) => {
+    if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); send(); }
+  });
 
-/* ---------- reset ---------- */
-function resetChat() {
-  history = [];
-  localStorage.removeItem(HIST_KEY);
+  // ---------- init ----------
   renderMessages();
   updateHeader();
+  updateSend();
+  resizeInput();
   els.input.focus();
-}
+  </script>
 
-/* ---------- events ---------- */
-els.form.addEventListener("submit", (e) => { e.preventDefault(); send(); });
-els.input.addEventListener("input", () => { updateSend(); resizeInput(); });
-els.input.addEventListener("keydown", (e) => {
-  if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); send(); }
-});
-
-renderMessages();
-updateHeader();
-updateSend();
-resizeInput();
-els.input.focus();
-</script>
-
-<div id="install-banner" class="install-banner">
-  <div class="install-text">
-    <span>Instalar Keeper</span>
-    Adiciona à ecrã inicial
+  <!-- ===== PWA ===== -->
+  <div id="install-banner" class="install-banner">
+    <div class="install-text">
+      <span>Instalar Keeper</span>
+      Adiciona a ecra inicial
+    </div>
+    <button id="install-btn">Instalar</button>
+    <button id="install-dismiss">&#10005;</button>
   </div>
-  <button id="install-btn">Instalar</button>
-  <button id="install-dismiss">&#10005;</button>
-</div>
-
-<script>
-if ("serviceWorker" in navigator) {
-  navigator.serviceWorker.register("/sw.js").catch(() => {});
-}
-let deferredPrompt;
-const installBanner = document.getElementById("install-banner");
-document.getElementById("install-btn").addEventListener("click", async () => {
-  if (!deferredPrompt) return;
-  deferredPrompt.prompt();
-  await deferredPrompt.userChoice;
-  deferredPrompt = null;
-  installBanner.classList.remove("mostrar");
-});
-document.getElementById("install-dismiss").addEventListener("click", () => {
-  installBanner.classList.remove("mostrar");
-  sessionStorage.setItem("installDismissed", "1");
-});
-window.addEventListener("beforeinstallprompt", (e) => {
-  e.preventDefault();
-  deferredPrompt = e;
-  if (!sessionStorage.getItem("installDismissed")) installBanner.classList.add("mostrar");
-});
-window.addEventListener("appinstalled", () => installBanner.classList.remove("mostrar"));
-</script>
+  <script>
+    if ("serviceWorker" in navigator) navigator.serviceWorker.register("/sw.js").catch(() => {});
+    let deferredPrompt;
+    const ib = $("install-banner");
+    $("install-btn").addEventListener("click", async () => {
+      if (!deferredPrompt) return;
+      deferredPrompt.prompt();
+      await deferredPrompt.userChoice;
+      deferredPrompt = null;
+      ib.classList.remove("mostrar");
+    });
+    $("install-dismiss").addEventListener("click", () => {
+      ib.classList.remove("mostrar");
+      sessionStorage.setItem("installDismissed", "1");
+    });
+    window.addEventListener("beforeinstallprompt", (e) => {
+      e.preventDefault(); deferredPrompt = e;
+      if (!sessionStorage.getItem("installDismissed")) ib.classList.add("mostrar");
+    });
+    window.addEventListener("appinstalled", () => ib.classList.remove("mostrar"));
+  </script>
 </body>
 </html>
