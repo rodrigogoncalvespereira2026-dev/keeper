@@ -293,7 +293,21 @@
       padding: 5px 12px; cursor: pointer; transition: all .2s ease;
     }
     .ghost-btn:hover { color: var(--ink); border-color: var(--gold-dim); }
+    .ghost-btn.on { color: var(--gold); border-color: var(--gold-dim); background: var(--gold-dim); }
     .hidden { display: none !important; }
+
+    /* ========== VOICE ========== */
+    .speak-btn {
+      background: none; border: none; cursor: pointer;
+      color: var(--muted); padding: 2px 4px; margin-top: 4px;
+      transition: color .2s; display: inline-block;
+    }
+    .speak-btn:hover { color: var(--gold); }
+    .speak-btn.speaking { color: var(--gold); animation: speakPulse 1s ease-in-out infinite; }
+    @keyframes speakPulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: .5; }
+    }
 
     /* ========== INSTALL BANNER ========== */
     .install-banner {
@@ -376,6 +390,7 @@
           <p id="chat-meta" class="chat-head-meta">aguardando ligacao...</p>
         </div>
         <span class="spacer"></span>
+        <button id="voice-btn" class="ghost-btn" type="button" title="Voz" onclick="toggleVoice()">voz</button>
         <button class="ghost-btn" type="button" title="Reiniciar" onclick="resetChat()">reiniciar</button>
       </div>
       <div id="messages" class="messages" aria-live="polite"></div>
@@ -484,6 +499,35 @@ Es o Keeper, o Guardiao da Coroa de Power Rangers Primal Force. A tua existencia
 
   function scrollDown() { els.messages.scrollTop = els.messages.scrollHeight; }
 
+  // ---------- voice ----------
+  let voiceOn = localStorage.getItem("keeper.voice") === "1";
+  const synth = window.speechSynthesis;
+
+  function toggleVoice() {
+    voiceOn = !voiceOn;
+    localStorage.setItem("keeper.voice", voiceOn ? "1" : "0");
+    $("voice-btn").classList.toggle("on", voiceOn);
+    if (!voiceOn) synth.cancel();
+  }
+
+  function speak(text, btn) {
+    synth.cancel();
+    if (!voiceOn || !text) return;
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = "pt-PT";
+    u.rate = 0.9;
+    const voices = synth.getVoices();
+    const pt = voices.find(v => v.lang.startsWith("pt"));
+    if (pt) u.voice = pt;
+    u.onstart = () => btn?.classList.add("speaking");
+    u.onend = () => btn?.classList.remove("speaking");
+    synth.speak(u);
+  }
+
+  if (voiceOn) $("voice-btn").classList.add("on");
+  synth.onvoiceschanged = () => {};
+  synth.getVoices();
+
   // ---------- messages ----------
   function addBubble(role, content, who) {
     const wrap = document.createElement("div");
@@ -507,7 +551,15 @@ Es o Keeper, o Guardiao da Coroa de Power Rangers Primal Force. A tua existencia
     body.appendChild(label);
     body.appendChild(bubble);
 
-    if (role === "keeper") { wrap.appendChild(av); wrap.appendChild(body); }
+    if (role === "keeper") {
+      const speakBtn = document.createElement("button");
+      speakBtn.className = "speak-btn";
+      speakBtn.type = "button";
+      speakBtn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>';
+      speakBtn.onclick = () => speak(content, speakBtn);
+      body.appendChild(speakBtn);
+      wrap.appendChild(av); wrap.appendChild(body);
+    }
     else { wrap.appendChild(body); wrap.appendChild(av); }
 
     els.messages.appendChild(wrap);
@@ -596,6 +648,10 @@ Es o Keeper, o Guardiao da Coroa de Power Rangers Primal Force. A tua existencia
       history.push({ role: "assistant", content: reply || "(resposta vazia)" });
       renderMessages();
       saveHistory();
+      if (voiceOn && reply) {
+        const last = els.messages.querySelector(".msg.keeper:last-child .speak-btn");
+        speak(reply, last);
+      }
     } catch (err) {
       removeTyping();
       const msg = err.name === "AbortError"
