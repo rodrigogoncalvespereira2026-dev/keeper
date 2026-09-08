@@ -1,4 +1,4 @@
-const CACHE = "keeper-v1";
+const CACHE = "keeper-v2";
 const ASSETS = ["/", "/index.html", "/manifest.json", "/KEEPER.md"];
 
 self.addEventListener("install", (e) => {
