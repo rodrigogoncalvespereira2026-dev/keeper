@@ -41,13 +41,15 @@ const server = createServer(async (req, res) => {
     }
     try {
       const body = await readBody(req);
+      const payload = JSON.parse(body);
+      payload.model = OPENROUTER_MODEL;
       const fwd = await fetch(OPENROUTER_URL.replace(/\/+$/, "") + "/chat/completions", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: "Bearer " + OPENROUTER_KEY,
         },
-        body,
+        body: JSON.stringify(payload),
       });
       const data = await fwd.text();
       res.writeHead(fwd.status, { "Content-Type": "application/json" });
