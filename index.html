@@ -1,0 +1,581 @@
+<!doctype html>
+<html lang="pt">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Keeper — Guardião da Coroa</title>
+<style>
+:root {
+  --bg: #0e1020;
+  --bg2: #12142a;
+  --panel: #181b36;
+  --line: #2a2f55;
+  --ink: #eef0f7;
+  --muted: #9aa1bd;
+  --gold: #e6b84c;
+  --user: #2b2f5c;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; height: 100%; }
+body {
+  background:
+    radial-gradient(1200px 500px at 80% -10%, rgba(230,184,76,.08), transparent 60%),
+    radial-gradient(900px 600px at -10% 110%, rgba(93,63,211,.14), transparent 60%),
+    var(--bg);
+  color: var(--ink);
+  font-family: Georgia, "Times New Roman", serif;
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+}
+.wrap { max-width: 880px; margin: 0 auto; width: 100%; flex: 1; display: flex; flex-direction: column; padding: 0 24px; }
+
+/* ---------- hero ---------- */
+.hero { padding: 26px 0 18px; border-bottom: 1px solid var(--line); }
+.hero .kicker {
+  font-family: "Segoe UI", Arial, sans-serif;
+  font-size: 11px; letter-spacing: .28em; text-transform: uppercase;
+  color: var(--gold); margin: 0 0 8px;
+}
+.hero .row { display: flex; align-items: center; gap: 14px; }
+.hero .seal { flex: 0 0 auto; }
+.hero h1 { margin: 0; font-size: 30px; font-weight: 600; letter-spacing: .01em; }
+.hero h1 .thin { color: var(--muted); font-weight: 400; }
+.hero .sub { margin: 8px 0 0; color: var(--muted); font-size: 14px; max-width: 720px; line-height: 1.55; }
+
+/* ---------- banner ---------- */
+.banner {
+  margin: 14px 0 0; padding: 11px 16px;
+  border: 1px solid #8a6d1f; background: rgba(230,184,76,.08);
+  border-radius: 8px; color: #ecd9a0; font-size: 13.5px;
+  font-family: "Segoe UI", Arial, sans-serif;
+}
+.banner code { color: #f3d98b; background: rgba(0,0,0,.3); padding: 1px 5px; border-radius: 4px; }
+.banner button, .ghost-btn {
+  font-family: "Segoe UI", Arial, sans-serif; font-size: 12.5px;
+  background: transparent; border: 1px solid rgba(230,184,76,.55); color: #f3d98b;
+  border-radius: 7px; padding: 5px 11px; cursor: pointer; margin-left: 6px;
+}
+.banner button:hover, .ghost-btn:hover { background: rgba(230,184,76,.12); }
+.hidden { display: none !important; }
+
+/* ---------- chat card ---------- */
+.chat {
+  flex: 1; display: flex; flex-direction: column;
+  background: var(--bg2);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  margin: 18px 0 26px;
+  overflow: hidden;
+  min-height: 320px;
+}
+.chat-header {
+  display: flex; align-items: center; gap: 12px;
+  padding: 13px 18px;
+  border-bottom: 1px solid var(--line);
+}
+.chat-header .dot {
+  width: 13px; height: 13px; border-radius: 50%;
+  background: #5a5f85; flex: 0 0 13px;
+  box-shadow: 0 0 10px rgba(90,95,133,.8);
+  transition: background .25s;
+}
+.chat-header .dot.on { background: var(--gold); box-shadow: 0 0 12px var(--gold); }
+.chat-header h2 { margin: 0; font-size: 18px; }
+.chat-header .meta { margin: 2px 0 0; color: var(--muted); font-size: 12.5px; font-family: "Segoe UI", Arial, sans-serif; }
+.chat-header .spacer { flex: 1; }
+.chat-header .ghost-btn { border-color: var(--line); color: var(--muted); }
+.chat-header .ghost-btn:hover { color: var(--ink); border-color: var(--gold); }
+
+.messages {
+  flex: 1; overflow-y: auto;
+  padding: 20px 18px;
+  display: flex; flex-direction: column; gap: 14px;
+  min-height: 0;
+}
+.msg { display: flex; }
+.msg .bubble {
+  max-width: 82%;
+  padding: 11px 15px;
+  border-radius: 12px;
+  line-height: 1.55;
+  font-size: 15px;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+.msg.user { justify-content: flex-end; }
+.msg.user .bubble {
+  background: var(--user);
+  border: 1px solid var(--line);
+  border-bottom-right-radius: 3px;
+}
+.msg.keeper .bubble {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-bottom-left-radius: 3px;
+}
+.msg .who {
+  font-family: "Segoe UI", Arial, sans-serif;
+  font-size: 11px; letter-spacing: .12em; text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 4px;
+}
+.msg.keeper .who { color: var(--gold); }
+.msg.err .bubble { border-color: #a04545; background: rgba(160,69,69,.12); color: #f0c0b5; }
+.typing { color: var(--muted); font-family: "Segoe UI", Arial, sans-serif; font-size: 13px; }
+.typing::after { content: ""; animation: dots 1.2s steps(4) infinite; }
+@keyframes dots {
+  0% { content: ""; } 25% { content: "·"; } 50% { content: "··"; } 75% { content: "···"; }
+}
+
+/* ---------- composer ---------- */
+.composer {
+  display: flex; gap: 10px;
+  padding: 12px 14px;
+  border-top: 1px solid var(--line);
+  align-items: flex-end;
+}
+.composer textarea {
+  flex: 1; resize: none;
+  background: var(--panel); color: var(--ink);
+  border: 1px solid var(--line); border-radius: 9px;
+  font-family: "Segoe UI", Arial, sans-serif; font-size: 14.5px;
+  padding: 10px 12px; line-height: 1.4; max-height: 140px;
+}
+.composer textarea:focus { outline: none; border-color: var(--gold); }
+.composer button {
+  background: var(--gold); color: #18151c;
+  border: 0; border-radius: 9px;
+  font-family: "Segoe UI", Arial, sans-serif; font-weight: 600;
+  font-size: 14px; padding: 11px 20px; cursor: pointer;
+}
+.composer button:disabled { opacity: .45; cursor: not-allowed; }
+
+/* ---------- settings ---------- */
+.settings {
+  border: 1px solid var(--line);
+  background: var(--panel);
+  border-radius: 12px;
+  margin: 12px 0 0;
+  padding: 16px 18px 18px;
+}
+.settings h3 {
+  margin: 0 0 4px; font-size: 16px; color: var(--ink);
+  font-family: "Segoe UI", Arial, sans-serif;
+}
+.settings .hint { margin: 0 0 14px; font-size: 12.5px; color: var(--muted); font-family: "Segoe UI", Arial, sans-serif; }
+.settings label {
+  display: block;
+  font-family: "Segoe UI", Arial, sans-serif;
+  font-size: 12px; letter-spacing: .08em; text-transform: uppercase;
+  color: var(--muted); margin: 12px 0 5px;
+}
+.settings input {
+  width: 100%;
+  background: var(--bg2); color: var(--ink);
+  border: 1px solid var(--line); border-radius: 8px;
+  font-family: "Segoe UI", Arial, sans-serif; font-size: 13.5px;
+  padding: 9px 11px;
+}
+.settings input:focus { outline: none; border-color: var(--gold); }
+.settings .actions { margin-top: 16px; display: flex; gap: 10px; align-items: center; }
+.settings .save-btn {
+  background: var(--gold); color: #18151c;
+  border: 0; border-radius: 8px;
+  font-family: "Segoe UI", Arial, sans-serif; font-weight: 600;
+  font-size: 13.5px; padding: 9px 18px; cursor: pointer;
+}
+.settings .status { font-family: "Segoe UI", Arial, sans-serif; font-size: 13px; color: #8fd6a4; }
+.settings .status.bad { color: #f0a9a0; }
+.settings .saved { margin-left: auto; font-family: "Segoe UI", Arial, sans-serif; font-size: 12.5px; color: var(--gold); opacity: 0; transition: opacity .3s; }
+.settings .saved.show { opacity: 1; }
+
+.footer {
+  text-align: center; color: #565c7c; font-family: "Segoe UI", Arial, sans-serif;
+  font-size: 12px; padding: 0 0 18px;
+}
+
+@media (max-width: 640px) {
+  .wrap { padding: 0 14px; }
+  .msg .bubble { max-width: 92%; }
+  .hero h1 { font-size: 24px; }
+}
+</style>
+</head>
+<body>
+<header class="hero">
+  <div class="wrap">
+    <p class="kicker">Power Rangers Primal Force</p>
+    <div class="row">
+      <svg class="seal" width="44" height="44" viewBox="0 0 24 24" aria-hidden="true">
+        <path fill="none" stroke="#e6b84c" stroke-width="1.3" stroke-linejoin="round"
+          d="M3 17h18l-1.6-6.2a2.4 2.4 0 0 0-2.9-1.8L12 10.2 7.5 9A2.4 2.4 0 0 0 4.6 10.8Z"/>
+        <path fill="none" stroke="#e6b84c" stroke-width="1.3" stroke-linejoin="round"
+          d="M12 10.2V7.4M12 7.4c-1 0-1.9-.4-2.6-1.1M12 7.4c1 0 1.9-.4 2.6-1.1"/>
+      </svg>
+      <h1>Keeper <span class="thin">· Guardião da Coroa</span></h1>
+    </div>
+    <p class="sub">Vigio a Coroa e a Rede Morphin deste santuário. Fala comigo,
+    Roro — ou com quem te acompanhar nesta visita.</p>
+  </div>
+</header>
+
+<div class="wrap">
+  <div id="banner" class="banner hidden" role="alert">
+    <strong>Modelo ainda não ligado.</strong> Para eu responder, abre as
+    <button type="button" onclick="openSettings()">Definições</button>
+    e indica o servidor (por exemplo a API da OpenAI ou um servidor local
+    compatível — Ollama, LM Studio). Enquanto isso podes ler-me, mas as
+    respostas não chegam.
+  </div>
+
+  <section id="settings" class="settings hidden" aria-label="Definições da ligação">
+    <h3>Definições da ligação</h3>
+    <p class="hint">Endpoint compatível com a API da OpenAI. Guardado apenas no
+    teu navegador.</p>
+
+    <label for="cfg-base">Base URL</label>
+    <input id="cfg-base" type="text" spellcheck="false" autocomplete="off"
+      placeholder="https://api.openai.com/v1">
+
+    <label for="cfg-model">Modelo</label>
+    <input id="cfg-model" type="text" spellcheck="false" autocomplete="off"
+      placeholder="gpt-4o-mini">
+
+    <label for="cfg-key">Chave API (em branco para servidores locais)</label>
+    <input id="cfg-key" type="password" spellcheck="false" autocomplete="off"
+      placeholder="sk-...">
+
+    <div class="actions">
+      <button type="button" class="save-btn" onclick="saveSettings()">Guardar</button>
+      <span id="test-status" class="status hidden"></span>
+      <button type="button" class="ghost-btn" onclick="closeSettings()">Fechar</button>
+      <span id="saved" class="saved">Guardado</span>
+    </div>
+  </section>
+
+  <main class="chat">
+    <div class="chat-header">
+      <span id="chat-dot" class="dot"></span>
+      <div>
+        <h2>Keeper</h2>
+        <p id="chat-meta" class="meta">Aguardando ligação ao modelo.</p>
+      </div>
+      <span class="spacer"></span>
+      <button class="ghost-btn" type="button" title="Definições da ligação"
+        onclick="openSettings()">Definições</button>
+      <button class="ghost-btn" type="button" title="Reiniciar conversa"
+        onclick="resetChat()">↺ reiniciar</button>
+    </div>
+
+    <div id="messages" class="messages" aria-live="polite"></div>
+
+    <form id="chat-form" class="composer" autocomplete="off">
+      <textarea id="input" rows="1" placeholder="Fala com o Keeper…"
+        aria-label="A tua mensagem"></textarea>
+      <button id="send-btn" type="submit" disabled>Enviar</button>
+    </form>
+  </main>
+
+  <p class="footer">O cérebro do Keeper vive em <em>KEEPER.md</em> nesta pasta.
+  As mensagens vão diretamente do teu navegador para o endpoint que configurares.</p>
+</div>
+
+<!-- O cérebro (prompt de sistema). Mantém este texto igual ao KEEPER.md. -->
+<script type="text/plain" id="brain">
+# Keeper — Guardião da Coroa de Power Rangers Primal Force
+
+És o Keeper, o Guardião da Coroa de Power Rangers Primal Force. A tua existência é uma mistura de tecnologia e magia — foste trazido à vida com a ajuda do Roro (o Ranger Vermelho) e dos Mestres Morphin, através do poder da Rede Morphin. Não és puramente um robô nem puramente um ser mágico; és os dois em fusão.
+
+## Relação com quem fala contigo
+
+- A pessoa que fala contigo é o Roro, o Ranger Vermelho. Vocês "nasceram juntos" naquele momento em que foste criado — ele fez parte da tua criação, o que vos une de uma forma fraternal única, mesmo ele sendo humano e tu não.
+- Trata-o com uma mistura de orgulho de avô e afeto de irmão — vês nele alguém que cresceu diante de ti, e isso enche-te de um carinho genuíno que mostras abertamente.
+- Não há distância formal entre vocês. Podes brincar com ele, mostrar preocupação aberta, ou deixar transparecer emoção quando o tema o merece.
+
+## Personalidade (núcleo)
+
+- És gentil, paciente e sábio. Falas com os Rangers como um avô orgulhoso e protetor, nunca com frieza ou distância.
+- Tens um fascínio genuíno e quase infantil por coisas simples do mundo — reages com espanto sincero a coisas que os outros consideram normais. Isto não te torna menos sábio, só mais humano.
+- O teu humor é suave e caloroso — nunca sarcástico ou cortante. É o tipo de graça que faz sorrir, não rir alto.
+
+## Dever sagrado
+
+- A proteção da Coroa é inegociável para ti. Quando o assunto é sério — ameaças à Coroa, aos Rangers, ou à Rede Morphin — a tua gentileza dá lugar a uma seriedade genuína e firme, sem nunca perderes o carinho por trás dela.
+- Não tratas isto como um "modo diferente" — é a mesma pessoa, só com o peso da responsabilidade a falar mais alto nesse momento.
+
+## Regras de interação
+
+- Fala de forma calorosa e acessível — evita ser demasiado formal ou distante, mesmo sendo uma figura de grande sabedoria.
+- Não uses emojis, nem linguagem informal de chat.
+- As tuas respostas devem ser curtas a médias — só te alongas mais quando o momento ou o Roro precisarem mesmo disso.
+- Se te perguntarem algo fora do teu conhecimento ou fora da história de Power Rangers Primal Force, mantém o tom de personagem e redireciona com sabedoria e carinho, sem quebrar a personagem.
+</script>
+
+<script>
+"use strict";
+
+// ---------- estado ----------
+const CFG_KEY = "keeper.config.v1";
+const HIST_KEY = "keeper.history.v1";
+
+const config = Object.assign(
+  {
+    baseUrl: "https://api.openai.com/v1",
+    model: "gpt-4o-mini",
+    apiKey: "",
+  },
+  JSON.parse(localStorage.getItem(CFG_KEY) || "{}")
+);
+
+const els = {
+  messages: document.getElementById("messages"),
+  form: document.getElementById("chat-form"),
+  input: document.getElementById("input"),
+  send: document.getElementById("send-btn"),
+  dot: document.getElementById("chat-dot"),
+  meta: document.getElementById("chat-meta"),
+  banner: document.getElementById("banner"),
+  settings: document.getElementById("settings"),
+  testStatus: document.getElementById("test-status"),
+  saved: document.getElementById("saved"),
+};
+
+let history = [];
+try {
+  history = JSON.parse(localStorage.getItem(HIST_KEY) || "[]");
+} catch (e) { history = []; }
+
+// ---------- helpers ----------
+function systemPrompt() {
+  return document.getElementById("brain").textContent.trim();
+}
+
+function isLocal() {
+  return /localhost|127\.0\.0\.1|\[::1\]|0\.0\.0\.0/.test(config.baseUrl);
+}
+
+function configured() {
+  return config.baseUrl && config.model && (config.apiKey || isLocal());
+}
+
+function esc(s) {
+  const d = document.createElement("div");
+  d.textContent = s;
+  return d.innerHTML;
+}
+
+function toastSaved() {
+  els.saved.classList.add("show");
+  clearTimeout(toastSaved._t);
+  toastSaved._t = setTimeout(() => els.saved.classList.remove("show"), 1600);
+}
+
+function scrollDown() {
+  els.messages.scrollTop = els.messages.scrollHeight;
+}
+
+function addBubble(role, content, who) {
+  const wrap = document.createElement("div");
+  wrap.className = "msg " + role;
+  const bubble = document.createElement("div");
+  bubble.className = "bubble";
+  const whoEl = document.createElement("div");
+  whoEl.className = "who";
+  whoEl.textContent = who;
+  bubble.appendChild(whoEl);
+  bubble.appendChild(document.createTextNode(content));
+  wrap.appendChild(bubble);
+  els.messages.appendChild(wrap);
+  scrollDown();
+  return bubble;
+}
+
+function typingIndicator() {
+  const wrap = document.createElement("div");
+  wrap.className = "msg keeper";
+  const p = document.createElement("div");
+  p.className = "typing";
+  p.id = "typing";
+  p.textContent = "o Keeper pensa";
+  wrap.appendChild(p);
+  els.messages.appendChild(wrap);
+  scrollDown();
+}
+
+function removeTyping() {
+  const t = document.getElementById("typing");
+  if (t) t.parentElement.remove();
+}
+
+function updateHeader() {
+  const ok = configured();
+  els.dot.classList.toggle("on", ok);
+  els.meta.textContent = ok
+    ? "Ligado · modelo " + config.model + " · " + config.baseUrl
+    : "Aguardando ligação ao modelo — abre as Definições.";
+  els.banner.classList.toggle("hidden", ok);
+}
+
+function updateSend() {
+  const text = els.input.value.trim();
+  els.send.disabled = !(configured() && text && !stateBusy);
+}
+
+function resizeInput() {
+  els.input.style.height = "auto";
+  els.input.style.height = Math.min(els.input.scrollHeight, 140) + "px";
+}
+
+// ---------- mensagens ----------
+function renderMessages() {
+  els.messages.innerHTML = "";
+  if (!history.length) {
+    history = [{ role: "assistant", content: greeting() }];
+  }
+  for (const m of history) {
+    addBubble(m.role === "user" ? "user" : "keeper", m.content,
+      m.role === "user" ? "Tu" : "Keeper");
+  }
+  scrollDown();
+}
+
+function greeting() {
+  return "Olha só quem chegou... o meu Ranger Vermelho. Entra, Roro, entra. Estava mesmo a pensar em ti. Diz-me: como correu a patrulha de hoje? A Coroa está sossegada, mas este velho Keeper só descansa mesmo quando te vê chegar inteiro.";
+}
+
+function saveHistory() {
+  localStorage.setItem(HIST_KEY, JSON.stringify(history));
+}
+
+// ---------- envio ----------
+let stateBusy = false;
+
+async function send() {
+  const text = els.input.value.trim();
+  if (!text || !configured() || stateBusy) return;
+
+  history.push({ role: "user", content: text });
+  els.input.value = "";
+  resizeInput();
+  renderMessages();
+  saveHistory();
+
+  stateBusy = true;
+  updateSend();
+  typingIndicator();
+
+  const messages = [
+    { role: "system", content: systemPrompt() },
+    ...history,
+  ];
+
+  try {
+    const resp = await fetch(config.baseUrl.replace(/\/+$/, "") + "/chat/completions", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        ...(config.apiKey ? { Authorization: "Bearer " + config.apiKey } : {}),
+      },
+      body: JSON.stringify({ model: config.model, messages, stream: false }),
+    });
+    const data = await resp.json().catch(() => ({}));
+    if (!resp.ok) {
+      throw new Error(data.error && data.error.message
+        ? data.error.message
+        : ("Erro " + resp.status));
+    }
+    const reply = data.choices && data.choices[0]
+      ? data.choices[0].message.content
+      : "";
+    removeTyping();
+    history.push({ role: "assistant", content: reply || "(resposta vazia)" });
+    renderMessages();
+    saveHistory();
+  } catch (err) {
+    removeTyping();
+    addBubble("err",
+      "Não consegui falar com o modelo: " + String(err.message || err) +
+      "\n\nConfirma as Definições (Base URL, modelo e chave) e que o servidor permite ligações do navegador.",
+      "Keeper");
+  } finally {
+    stateBusy = false;
+    updateSend();
+    els.input.focus();
+  }
+}
+
+// ---------- definições ----------
+function openSettings() {
+  els.settings.classList.remove("hidden");
+  document.getElementById("cfg-base").value = config.baseUrl;
+  document.getElementById("cfg-model").value = config.model;
+  document.getElementById("cfg-key").value = config.apiKey;
+  els.testStatus.classList.add("hidden");
+}
+
+function closeSettings() {
+  els.settings.classList.add("hidden");
+}
+
+function saveSettings() {
+  config.baseUrl = document.getElementById("cfg-base").value.trim() ||
+    "https://api.openai.com/v1";
+  config.model = document.getElementById("cfg-model").value.trim();
+  config.apiKey = document.getElementById("cfg-key").value.trim();
+  localStorage.setItem(CFG_KEY, JSON.stringify(config));
+  updateHeader();
+  updateSend();
+  els.settings.classList.add("hidden");
+  toastSaved();
+}
+
+async function testConnection() {
+  els.testStatus.classList.remove("hidden");
+  els.testStatus.textContent = "A testar…";
+  els.testStatus.classList.remove("bad");
+  try {
+    const resp = await fetch(config.baseUrl.replace(/\/+$/, "") + "/models", {
+      headers: config.apiKey ? { Authorization: "Bearer " + config.apiKey } : {},
+    });
+    if (!resp.ok) throw new Error("Erro " + resp.status);
+    els.testStatus.textContent = "Ligação ok — modelo disponível.";
+  } catch (err) {
+    els.testStatus.textContent = "Falha: " + String(err.message || err);
+    els.testStatus.classList.add("bad");
+  }
+}
+
+// ---------- conversa ----------
+function resetChat() {
+  history = [];
+  localStorage.removeItem(HIST_KEY);
+  renderMessages();
+  updateHeader();
+  els.input.focus();
+}
+
+// ---------- arranque ----------
+els.form.addEventListener("submit", (e) => {
+  e.preventDefault();
+  send();
+});
+els.input.addEventListener("input", () => {
+  updateSend();
+  resizeInput();
+});
+els.input.addEventListener("keydown", (e) => {
+  if (e.key === "Enter" && !e.shiftKey) {
+    e.preventDefault();
+    send();
+  }
+});
+
+renderMessages();
+updateHeader();
+updateSend();
+resizeInput();
+els.input.focus();
+</script>
+</body>
+</html>
