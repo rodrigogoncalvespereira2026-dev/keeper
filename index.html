@@ -678,6 +678,8 @@ Es o Keeper, o Guardiao da Coroa de Power Rangers Primal Force. A tua existencia
     const messages = [{ role: "system", content: systemPrompt() }, ...history];
 
     try {
+      const ctrl = new AbortController();
+      const timer = setTimeout(() => ctrl.abort(), 60000);
       const resp = await fetch(config.baseUrl.replace(/\/+$/, "") + "/chat/completions", {
         method: "POST",
         headers: {
@@ -685,7 +687,9 @@ Es o Keeper, o Guardiao da Coroa de Power Rangers Primal Force. A tua existencia
           ...(config.apiKey ? { Authorization: "Bearer " + config.apiKey } : {}),
         },
         body: JSON.stringify({ model: config.model, messages, stream: false }),
+        signal: ctrl.signal,
       });
+      clearTimeout(timer);
       const data = await resp.json().catch(() => ({}));
       if (!resp.ok) throw new Error(data.error?.message || "Erro " + resp.status);
       const reply = data.choices?.[0]?.message?.content || "";
@@ -695,7 +699,10 @@ Es o Keeper, o Guardiao da Coroa de Power Rangers Primal Force. A tua existencia
       saveHistory();
     } catch (err) {
       removeTyping();
-      addBubble("err", "Nao consegui falar com o modelo: " + String(err.message || err), "Keeper");
+      const msg = err.name === "AbortError"
+        ? "O modelo demorou mais de 60 segundos. Tenta de novo ou muda de modelo nas Definicoes."
+        : "Nao consegui falar com o modelo: " + String(err.message || err);
+      addBubble("err", msg, "Keeper");
     } finally {
       stateBusy = false;
       updateSend();
