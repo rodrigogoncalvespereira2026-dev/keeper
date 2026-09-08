@@ -118,54 +118,6 @@
       max-width: 560px; line-height: 1.55;
     }
 
-    /* ========== BANNER ========== */
-    .banner {
-      margin: 10px 0 0; padding: 10px 14px;
-      border: 1px solid rgba(230,184,76,.2);
-      background: var(--glass); backdrop-filter: blur(16px);
-      border-radius: var(--radius-sm); color: #ecd9a0;
-      font-size: 12.5px; display: flex; align-items: center; gap: 8px;
-      flex-shrink: 0;
-      animation: fadeSlideIn .4s ease;
-    }
-    .banner code {
-      color: var(--gold); background: rgba(0,0,0,.3);
-      padding: 2px 6px; border-radius: 4px;
-      font-family: 'JetBrains Mono', monospace; font-size: 11px;
-    }
-
-    /* ========== SETTINGS ========== */
-    .settings {
-      border: 1px solid var(--glass-border);
-      background: var(--glass);
-      backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
-      border-radius: var(--radius);
-      margin: 10px 0 0; padding: 18px;
-      flex-shrink: 0;
-      animation: fadeSlideIn .3s ease;
-      box-shadow: 0 8px 32px rgba(0,0,0,.4);
-    }
-    .settings h3 { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
-    .settings-hint { font-size: 11.5px; color: var(--muted); margin-bottom: 14px; }
-    .settings label {
-      display: block; font-size: 10px; letter-spacing: .1em;
-      text-transform: uppercase; color: var(--muted);
-      margin: 12px 0 5px; font-family: 'JetBrains Mono', monospace;
-    }
-    .settings input {
-      width: 100%; background: rgba(0,0,0,.25); color: var(--ink);
-      border: 1px solid rgba(255,255,255,.06); border-radius: var(--radius-sm);
-      font-family: 'JetBrains Mono', monospace; font-size: 12.5px;
-      padding: 9px 11px; transition: border-color .2s, box-shadow .2s;
-    }
-    .settings input:focus {
-      outline: none; border-color: var(--gold-dim);
-      box-shadow: 0 0 0 3px rgba(230,184,76,.08);
-    }
-    .settings-actions {
-      margin-top: 14px; display: flex; gap: 8px; align-items: center;
-    }
-
     /* ========== CHAT ========== */
     .chat {
       flex: 1 1 0; display: flex; flex-direction: column;
@@ -340,14 +292,6 @@
       padding: 5px 12px; cursor: pointer; transition: all .2s ease;
     }
     .ghost-btn:hover { color: var(--ink); border-color: var(--gold-dim); }
-    .save-btn {
-      background: linear-gradient(135deg, var(--gold), #d4a23a);
-      color: #0a0a1a; border: 0; border-radius: var(--radius-sm);
-      font-family: 'Inter', sans-serif; font-weight: 600;
-      font-size: 12px; padding: 9px 18px; cursor: pointer;
-      transition: all .2s;
-    }
-    .save-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 14px rgba(230,184,76,.3); }
     .hidden { display: none !important; }
 
     /* ========== INSTALL BANNER ========== */
@@ -422,31 +366,6 @@
       <p class="hero-sub">Vigio a Coroa e a Rede Morphin deste santuario. Fala comigo, Roro.</p>
     </header>
 
-    <!-- ===== BANNER (quando nao configurado) ===== -->
-    <div id="banner" class="banner hidden" role="alert">
-      <span>Modelo ainda nao ligado.</span> Abre as
-      <button class="ghost-btn" type="button" onclick="openSettings()">Definicoes</button>
-      e indica o endpoint da API.
-    </div>
-
-    <!-- ===== SETTINGS ===== -->
-    <section id="settings" class="settings hidden" aria-label="Definicoes da ligacao">
-      <h3>Definicoes da ligacao</h3>
-      <p class="settings-hint">Endpoint compativel com a API da OpenAI. Guardado apenas no teu navegador.</p>
-      <label for="cfg-base">Base URL</label>
-      <input id="cfg-base" type="text" spellcheck="false" autocomplete="off" placeholder="https://api.openai.com/v1">
-      <label for="cfg-model">Modelo</label>
-      <input id="cfg-model" type="text" spellcheck="false" autocomplete="off" placeholder="gpt-4o-mini">
-      <label for="cfg-key">Chave API</label>
-      <input id="cfg-key" type="password" spellcheck="false" autocomplete="off" placeholder="sk-...">
-      <div class="settings-actions">
-        <button type="button" class="save-btn" onclick="saveSettings()">Guardar</button>
-        <span id="test-status" class="hidden" style="font-size:11px;color:#34d399;font-family:'JetBrains Mono',monospace"></span>
-        <button type="button" class="ghost-btn" onclick="closeSettings()">Fechar</button>
-        <span id="saved" style="margin-left:auto;font-size:11px;color:var(--gold);opacity:0;transition:opacity .3s;font-family:'JetBrains Mono',monospace">Guardado</span>
-      </div>
-    </section>
-
     <!-- ===== CHAT ===== -->
     <main class="chat">
       <div class="chat-head">
@@ -456,7 +375,6 @@
           <p id="chat-meta" class="chat-head-meta">aguardando ligacao...</p>
         </div>
         <span class="spacer"></span>
-        <button class="ghost-btn" type="button" title="Definicoes" onclick="openSettings()">Definicoes</button>
         <button class="ghost-btn" type="button" title="Reiniciar" onclick="resetChat()">reiniciar</button>
       </div>
       <div id="messages" class="messages" aria-live="polite"></div>
@@ -551,16 +469,18 @@ Es o Keeper, o Guardiao da Coroa de Power Rangers Primal Force. A tua existencia
   const CFG_KEY = "keeper.config.v1";
   const HIST_KEY = "keeper.history.v1";
 
-  const config = Object.assign(
-    { baseUrl: "https://api.openai.com/v1", model: "gpt-4o-mini", apiKey: "" },
-    JSON.parse(localStorage.getItem(CFG_KEY) || "{}")
-  );
+  const config = {
+    baseUrl: "https://openrouter.ai/api/v1",
+    model: "nex-agi/nex-n2.5-pro:free",
+    apiKey: localStorage.getItem(CFG_KEY)
+      ? (JSON.parse(localStorage.getItem(CFG_KEY) || "{}").apiKey || "")
+      : "",
+  };
 
   const $ = (id) => document.getElementById(id);
   const els = {
     messages: $("messages"), form: $("chat-form"), input: $("input"),
     send: $("send-btn"), dot: $("chat-dot"), meta: $("chat-meta"),
-    banner: $("banner"), settings: $("settings"), saved: $("saved"),
   };
 
   let history = [];
@@ -568,14 +488,7 @@ Es o Keeper, o Guardiao da Coroa de Power Rangers Primal Force. A tua existencia
 
   // ---------- helpers ----------
   const systemPrompt = () => $("brain").textContent.trim();
-  const isLocal = () => /localhost|127\.0\.0\.1|\[::1\]|0\.0\.0\.0/.test(config.baseUrl);
-  const configured = () => config.baseUrl && config.model && (config.apiKey || isLocal());
-
-  function toastSaved() {
-    els.saved.style.opacity = "1";
-    clearTimeout(toastSaved._t);
-    toastSaved._t = setTimeout(() => els.saved.style.opacity = "0", 1600);
-  }
+  const configured = () => config.baseUrl && config.model && config.apiKey;
 
   function scrollDown() { els.messages.scrollTop = els.messages.scrollHeight; }
 
@@ -628,10 +541,7 @@ Es o Keeper, o Guardiao da Coroa de Power Rangers Primal Force. A tua existencia
   function updateHeader() {
     const ok = configured();
     els.dot.classList.toggle("on", ok);
-    els.meta.textContent = ok
-      ? config.model + " · " + config.baseUrl.replace("https://", "")
-      : "aguardando ligacao...";
-    els.banner.classList.toggle("hidden", ok);
+    els.meta.textContent = ok ? "Ligado" : "Sem ligacao...";
   }
 
   function updateSend() {
@@ -708,24 +618,6 @@ Es o Keeper, o Guardiao da Coroa de Power Rangers Primal Force. A tua existencia
       updateSend();
       els.input.focus();
     }
-  }
-
-  // ---------- settings ----------
-  function openSettings() {
-    els.settings.classList.remove("hidden");
-    $("cfg-base").value = config.baseUrl;
-    $("cfg-model").value = config.model;
-    $("cfg-key").value = config.apiKey;
-  }
-  function closeSettings() { els.settings.classList.add("hidden"); }
-  function saveSettings() {
-    config.baseUrl = $("cfg-base").value.trim() || "https://api.openai.com/v1";
-    config.model = $("cfg-model").value.trim();
-    config.apiKey = $("cfg-key").value.trim();
-    localStorage.setItem(CFG_KEY, JSON.stringify(config));
-    updateHeader(); updateSend();
-    els.settings.classList.add("hidden");
-    toastSaved();
   }
 
   // ---------- reset ----------
