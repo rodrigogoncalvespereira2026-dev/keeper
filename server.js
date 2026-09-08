@@ -6,7 +6,7 @@ const PORT = process.env.PORT || 3000;
 const ROOT = new URL(".", import.meta.url);
 
 const OPENROUTER_URL = process.env.OPENROUTER_URL || "https://openrouter.ai/api/v1";
-const OPENROUTER_MODEL = process.env.OPENROUTER_MODEL || "nex-agi/nex-n2.5-pro:free";
+const OPENROUTER_MODEL = process.env.OPENROUTER_MODEL || "openrouter/free";
 const OPENROUTER_KEY = process.env.OPENROUTER_KEY || "";
 
 const MIME = {
