@@ -1,9 +1,22 @@
 import { createServer } from "node:http";
 import { readFile } from "node:fs/promises";
-import { extname, join } from "node:path";
+import { extname, join, resolve } from "node:path";
+import { fileURLToPath } from "node:url";
 
 const PORT = process.env.PORT || 3000;
 const ROOT = new URL(".", import.meta.url);
+// Diretório real do projeto no disco (fileURLToPath para funcionar em Windows e Unix).
+const ROOT_PATH = fileURLToPath(ROOT);
+// Lore comum do universo Primal Force — partilhado com os outros personagens (pasta-mãe).
+const LORE_COMUM_PATH = resolve(ROOT_PATH, "..", "lore-comum.md");
+
+async function loadLoreComum() {
+  try {
+    return await readFile(LORE_COMUM_PATH, "utf8");
+  } catch {
+    return "";
+  }
+}
 
 const OPENROUTER_URL = process.env.OPENROUTER_URL || "https://openrouter.ai/api/v1";
 const OPENROUTER_MODEL = process.env.OPENROUTER_MODEL || "openrouter/free";
@@ -33,6 +46,12 @@ const server = createServer(async (req, res) => {
   const path = req.url.split("?")[0];
 
   // --- API proxy ---
+  if (path === "/api/lore" && req.method === "GET") {
+    const lore = await loadLoreComum();
+    res.writeHead(200, { "Content-Type": "text/plain; charset=utf-8", "Cache-Control": "no-store" });
+    res.end(lore);
+    return;
+  }
   if (path === "/api/chat" && req.method === "POST") {
     if (!OPENROUTER_KEY) {
       res.writeHead(500, { "Content-Type": "application/json" });
@@ -64,7 +83,7 @@ const server = createServer(async (req, res) => {
   // --- Static files ---
   let filePath = path === "/" ? "/index.html" : path;
   try {
-    const file = await readFile(join(ROOT.pathname, filePath));
+    const file = await readFile(join(ROOT_PATH, filePath));
     const mime = MIME[extname(filePath)] || "application/octet-stream";
     res.writeHead(200, { "Content-Type": mime });
     res.end(file);

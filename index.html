@@ -435,6 +435,33 @@ Es o Keeper, o Guardiao da Coroa de Power Rangers Primal Force. A tua existencia
 - Se te perguntarem algo fora do teu conhecimento ou fora da historia de Power Rangers Primal Force, mantem o tom de personagem e redireciona com sabedoria e carinho, sem quebrar a personagem.
   </script>
 
+  <!-- ===== LORE COMUM (cópia local de reserva) =====
+       O servidor serve a versão fresca da pasta-mãe em /api/lore (ficheiro ../lore-comum.md).
+       Este bloco é o fallback para quando o servidor não responde — se editares
+       o lore, atualiza também ../lore-comum.md (fonte de verdade). -->
+  <script type="text/plain" id="lore-comum">
+LORE COMUM DO UNIVERSO — Power Rangers Primal Force
+
+QUEM FALA CONTIGO: o Roro, o utilizador — Ranger Vermelho e líder da equipa.
+
+A EQUIPA: Power Rangers Primal Force, 131 episódios, 20 Rangers, cada um com
+um Zord dinossauro. O Roro lidera com o T-Rex. A Coroa tem 20 espaços para 20
+pedras — quem a completar ganha poder absoluto; o Keeper é o seu guardião.
+Lorde Arcano é o vilão principal (ep. 50); Maltherion e Valtherion são robôs
+gémeos. A Rede Morphin liga os Rangers ao poder; os seis Mestres Morphin
+protegem-na.
+
+QUEM FOI CRIADO POR QUEM: o Roro criou o Alfa (o assistente oficial do
+universo, inspirado no Alpha 5 e no Alpha 7) e criou os seis Mestres Morphin
+(que lhe devem a existência com gratidão). O Keeper nasceu da criação conjunta
+do Roro e dos Mestres, através da Rede Morphin — ele e o Roro "nasceram
+juntos". O Zenowing é o Ranger Prateado, ligado ao Titanossauro, amigo antigo
+do Roro de anos de batalhas (não foi criado por ele).
+
+Todos sabem que os outros existem e qual é o papel de cada um. Falam sempre
+em português europeu, com "tu".
+  </script>
+
   <!-- ===== APP LOGIC ===== -->
   <script>
   "use strict";
@@ -491,10 +518,24 @@ Es o Keeper, o Guardiao da Coroa de Power Rangers Primal Force. A tua existencia
   };
 
   let history = [];
+  let loreServidor = "";
   try { history = JSON.parse(localStorage.getItem(HIST_KEY) || "[]"); } catch {}
 
+  // Lore comum do universo — tenta buscar a versão fresca ao servidor (/api/lore)
+  fetch("/api/lore")
+    .then((r) => (r.ok ? r.text() : ""))
+    .then((t) => { if (t && t.trim()) loreServidor = t.trim(); })
+    .catch(() => {});
+
   // ---------- helpers ----------
-  const systemPrompt = () => $("brain").textContent.trim();
+  // Prompt próprio do Keeper + lore comum do universo (servidor /api/lore;
+  // se indisponível, usa a cópia local em #lore-comum).
+  const loreLocal = () => (document.getElementById("lore-comum")?.textContent || "").trim();
+  const systemPrompt = () => {
+    const base = $("brain").textContent.trim();
+    const lore = loreServidor || loreLocal();
+    return lore ? base + "\n\n---\n\n" + lore : base;
+  };
   const configured = () => true;
 
   function scrollDown() { els.messages.scrollTop = els.messages.scrollHeight; }

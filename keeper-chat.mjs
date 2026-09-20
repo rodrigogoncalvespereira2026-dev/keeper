@@ -12,7 +12,17 @@ import readline from "node:readline/promises";
 import { stdin as input, stdout as output } from "node:process";
 
 const SYSTEM_PROMPT_PATH = new URL("./KEEPER.md", import.meta.url);
-const systemPrompt = (await readFile(SYSTEM_PROMPT_PATH, "utf8")).trim();
+const LORE_COMUM_PATH = new URL("../lore-comum.md", import.meta.url);
+const systemPromptBase = (await readFile(SYSTEM_PROMPT_PATH, "utf8")).trim();
+
+// Lore comum do universo — partilhado com os outros personagens (pasta-mãe).
+let loreComum = "";
+try {
+  loreComum = (await readFile(LORE_COMUM_PATH, "utf8")).trim();
+} catch {
+  // Sem lore disponível (ex.: pasta fora do sítio) — segue só com o prompt próprio.
+}
+const systemPrompt = loreComum ? systemPromptBase + "\n\n---\n\n" + loreComum : systemPromptBase;
 
 const API_KEY = process.env.OPENAI_API_KEY ?? "";
 const BASE_URL = (process.env.OPENAI_BASE_URL ?? "https://api.openai.com/v1").replace(/\/+$/, "");
