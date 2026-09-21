@@ -157,7 +157,6 @@
       font-size: 10.5px; color: var(--muted);
       font-family: 'JetBrains Mono', monospace;
     }
-    .chat-head .spacer { flex: 1; }
 
     /* ========== MESSAGES ========== */
     .messages {
@@ -285,15 +284,35 @@
       font-family: 'JetBrains Mono', monospace;
     }
 
-    /* ========== SHARED BUTTONS ========== */
-    .ghost-btn {
-      font-family: 'Inter', sans-serif; font-size: 11px;
-      background: transparent; border: 1px solid rgba(255,255,255,.08);
-      color: var(--muted); border-radius: var(--radius-sm);
-      padding: 5px 12px; cursor: pointer; transition: all .2s ease;
+    /* ========== BARRA DE AÇÕES (igual em todos os personagens) ========== */
+    .acoes {
+      display: flex; align-items: center; flex-wrap: wrap; gap: 8px;
+      padding: 10px 14px;
+      border-top: 1px solid var(--glass-border);
+      background: rgba(0,0,0,.12);
+      flex-shrink: 0;
     }
-    .ghost-btn:hover { color: var(--ink); border-color: var(--gold-dim); }
-    .ghost-btn.on { color: var(--gold); border-color: var(--gold-dim); background: var(--gold-dim); }
+    .acao {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px; letter-spacing: .14em; text-transform: uppercase;
+      color: var(--muted);
+      background: rgba(255,255,255,.03);
+      border: 1px solid var(--glass-border);
+      border-radius: 999px;
+      padding: 7px 13px;
+      cursor: pointer;
+      transition: color .2s, border-color .2s, background .2s, box-shadow .2s;
+    }
+    .acao:hover { color: var(--ink); border-color: var(--gold-dim); background: rgba(255,255,255,.06); }
+    .acao .ic { font-size: 12px; line-height: 1; }
+    .acao[aria-pressed="true"] {
+      color: var(--gold);
+      border-color: var(--gold-dim);
+      background: rgba(230,184,76,.1);
+      box-shadow: 0 0 18px -4px var(--gold-glow);
+    }
+    .acao[aria-pressed="false"] .ic { opacity: .55; }
     .hidden { display: none !important; }
 
     /* ========== VOICE ========== */
@@ -355,6 +374,68 @@
       .chat { margin: 8px 0 0; }
       .footer { padding: 8px 0 10px; }
     }
+    /* ========== POLIMENTO TECH (set/2026) ========== */
+    /* Grelha holográfica por cima do fundo, sem tocar no canvas de partículas. */
+    body::after {
+      content: "";
+      position: fixed; inset: 0; z-index: 0; pointer-events: none;
+      background-image:
+        linear-gradient(rgba(230,184,76,.035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(230,184,76,.035) 1px, transparent 1px);
+      background-size: 46px 46px;
+      -webkit-mask-image: radial-gradient(circle at 50% 20%, #000 0%, transparent 78%);
+      mask-image: radial-gradient(circle at 50% 20%, #000 0%, transparent 78%);
+    }
+
+    /* Cantos HUD no painel do chat. */
+    .chat { position: relative; }
+    .chat::after {
+      content: ""; position: absolute; inset: 8px; border-radius: 12px;
+      pointer-events: none; opacity: .4;
+      background:
+        linear-gradient(rgba(230,184,76,.55), rgba(230,184,76,.55)) 0 0/16px 1px no-repeat,
+        linear-gradient(rgba(230,184,76,.55), rgba(230,184,76,.55)) 0 0/1px 16px no-repeat,
+        linear-gradient(rgba(230,184,76,.55), rgba(230,184,76,.55)) 100% 100%/16px 1px no-repeat,
+        linear-gradient(rgba(230,184,76,.55), rgba(230,184,76,.55)) 100% 100%/1px 16px no-repeat;
+      transition: opacity .4s ease;
+    }
+    .chat:focus-within::after { opacity: .9; }
+
+    /* Chips de estado no hero. */
+    .hero-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+    .tag {
+      display: inline-flex; align-items: center; gap: 7px;
+      padding: 5px 11px;
+      border: 1px solid var(--glass-border);
+      border-radius: 999px;
+      background: rgba(255,255,255,.03);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9.5px; letter-spacing: .12em; text-transform: uppercase;
+      color: var(--muted);
+    }
+    .tag b { color: var(--gold); font-weight: 600; letter-spacing: .16em; }
+
+    /* Barra de deslocamento invisível no campo de escrita: o textarea de uma
+       linha transborda ~2px e o WebKit desenhava as setas da barra. */
+    .composer textarea::-webkit-scrollbar { width: 0; height: 0; }
+
+    /* Brilho interior nas bolhas e foco visível. */
+    .msg.keeper .msg-bubble {
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.05);
+      border-left: 2px solid var(--gold-dim);
+    }
+    .msg .msg-bubble { box-shadow: 0 10px 26px rgba(0,0,0,.28); }
+
+    :focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+    .composer textarea:focus-visible { outline: none; }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: .001ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: .001ms !important;
+      }
+    }
   </style>
 </head>
 <body>
@@ -379,6 +460,11 @@
         <h1 class="hero-title">Keeper <span class="thin">Guardiao da Coroa</span></h1>
       </div>
       <p class="hero-sub">Vigio a Coroa e a Rede Morphin deste santuario. Fala comigo, Roro.</p>
+      <div class="hero-tags">
+        <span class="tag"><b>ESTADO</b> Coroa selada</span>
+        <span class="tag"><b>REDE</b> Morphin online</span>
+        <span class="tag"><b>GUARDIÃO</b> Keeper</span>
+      </div>
     </header>
 
     <!-- ===== CHAT ===== -->
@@ -389,15 +475,24 @@
           <h2>Keeper</h2>
           <p id="chat-meta" class="chat-head-meta">aguardando ligacao...</p>
         </div>
-        <span class="spacer"></span>
-        <button id="voice-btn" class="ghost-btn" type="button" title="Voz" onclick="toggleVoice()">voz</button>
-        <button class="ghost-btn" type="button" title="Reiniciar" onclick="resetChat()">reiniciar</button>
       </div>
       <div id="messages" class="messages" aria-live="polite"></div>
       <form id="chat-form" class="composer" autocomplete="off">
         <textarea id="input" rows="1" placeholder="Fala com o Keeper..." aria-label="A tua mensagem"></textarea>
         <button id="send-btn" type="submit" disabled>Enviar</button>
       </form>
+      <!-- Barra de ações: mesma ordem em todos os personagens -->
+      <nav class="acoes" aria-label="Ações">
+        <button id="voice-btn" class="acao" type="button" aria-pressed="true"
+                onclick="toggleVoice()" title="O Keeper lê cada resposta em voz alta">
+          <span id="voz-ic" class="ic" aria-hidden="true">🔊</span>
+          <span id="voz-txt">Voz ligada</span>
+        </button>
+        <button class="acao" type="button" onclick="resetChat()">
+          <span class="ic" aria-hidden="true">✨</span>
+          Nova conversa
+        </button>
+      </nav>
     </main>
 
     <!-- ===== FOOTER ===== -->
@@ -540,34 +635,77 @@ em português europeu, com "tu".
 
   function scrollDown() { els.messages.scrollTop = els.messages.scrollHeight; }
 
-  // ---------- voice ----------
-  let voiceOn = localStorage.getItem("keeper.voice") === "1";
+  // ---------- voz (mesmo sistema do Alpha) ----------
+  // Síntese do próprio browser, a falar sozinha cada resposta. O botão "voz"
+  // no topo é apenas o interruptor: só fica desligada se o desligares.
+  let voiceOn = localStorage.getItem("keeper.voice") !== "0";
   const synth = window.speechSynthesis;
+
+  // O browser só deixa sintetizar depois de um gesto do utilizador: até lá a
+  // resposta fica em espera e sai no primeiro toque/tecla.
+  let vozBloqueada = true;
+  let vozPendente = null;
+
+  function escolherVozPT() {
+    if (!synth) return null;
+    const vozes = synth.getVoices();
+    return (
+      vozes.find((v) => v.lang.includes("pt") && v.name.includes("Google")) ||
+      vozes.find((v) => v.lang.includes("pt")) ||
+      vozes.find((v) => v.lang.includes("es")) ||
+      null
+    );
+  }
+
+  /** Mostra no botão se a voz está ligada ou desligada. */
+  function atualizarBotaoVoz() {
+    $("voice-btn").setAttribute("aria-pressed", String(voiceOn));
+    $("voz-txt").textContent = voiceOn ? "Voz ligada" : "Voz desligada";
+    $("voz-ic").textContent = voiceOn ? "🔊" : "🔇";
+  }
 
   function toggleVoice() {
     voiceOn = !voiceOn;
     localStorage.setItem("keeper.voice", voiceOn ? "1" : "0");
-    $("voice-btn").classList.toggle("on", voiceOn);
-    if (!voiceOn) synth.cancel();
+    atualizarBotaoVoz();
+    if (!voiceOn) { synth.cancel(); vozPendente = null; }
   }
 
-  function speak(text, btn) {
+  function speak(text, btn, forcar = false) {
+    if (!synth || !text) return;
+    if (!forcar && !voiceOn) return;
+    if (vozBloqueada) { vozPendente = { text, btn }; return; }
     synth.cancel();
-    if (!voiceOn || !text) return;
     const u = new SpeechSynthesisUtterance(text);
     u.lang = "pt-PT";
-    u.rate = 0.9;
-    const voices = synth.getVoices();
-    const pt = voices.find(v => v.lang.startsWith("pt"));
-    if (pt) u.voice = pt;
+    u.rate = 0.85;
+    u.pitch = 1.1;
+    u.volume = 1.0;
+    const v = escolherVozPT();
+    if (v) u.voice = v;
     u.onstart = () => btn?.classList.add("speaking");
     u.onend = () => btn?.classList.remove("speaking");
+    u.onerror = () => btn?.classList.remove("speaking");
     synth.speak(u);
   }
 
-  if (voiceOn) $("voice-btn").classList.add("on");
-  synth.onvoiceschanged = () => {};
-  synth.getVoices();
+  function desbloquearVoz() {
+    if (!vozBloqueada) return;
+    vozBloqueada = false;
+    const p = vozPendente;
+    vozPendente = null;
+    if (p) speak(p.text, p.btn, true);
+  }
+
+  ["pointerdown", "click", "keydown", "touchstart"].forEach((ev) =>
+    window.addEventListener(ev, desbloquearVoz, { once: true, passive: true })
+  );
+
+  atualizarBotaoVoz();
+  if (synth) {
+    synth.addEventListener("voiceschanged", () => {});
+    synth.getVoices();
+  }
 
   // ---------- messages ----------
   function addBubble(role, content, who) {
@@ -597,7 +735,8 @@ em português europeu, com "tu".
       speakBtn.className = "speak-btn";
       speakBtn.type = "button";
       speakBtn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>';
-      speakBtn.onclick = () => speak(content, speakBtn);
+      // Clique explícito fala mesmo com a voz automática desligada.
+      speakBtn.onclick = () => speak(content, speakBtn, true);
       body.appendChild(speakBtn);
       wrap.appendChild(av); wrap.appendChild(body);
     }
@@ -689,7 +828,7 @@ em português europeu, com "tu".
       history.push({ role: "assistant", content: reply || "(resposta vazia)" });
       renderMessages();
       saveHistory();
-      if (voiceOn && reply) {
+      if (reply) {
         const last = els.messages.querySelector(".msg.keeper:last-child .speak-btn");
         speak(reply, last);
       }
