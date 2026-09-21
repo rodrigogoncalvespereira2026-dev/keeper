@@ -88,6 +88,90 @@
       padding: 20px 0 14px;
       border-bottom: 1px solid var(--glass-border);
       flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      gap: 18px;
+    }
+    .hero-text { flex: 1 1 auto; min-width: 0; }
+    /* Cara animada (cara.js) — a mesma do Alpha, com a identidade do Keeper. */
+    .cara-bloco {
+      flex: 0 0 auto;
+      display: flex; flex-direction: column; align-items: center; gap: 8px;
+    }
+    .cara {
+      width: clamp(96px, 15vh, 138px);
+      aspect-ratio: 300 / 280;
+      height: auto;
+      display: block;
+    }
+
+    /* ========== PAINEL DE REAÇÕES (gaveta que sobe por baixo) ========== */
+    .reacoes {
+      position: fixed; left: 0; right: 0; bottom: 0; z-index: 40;
+      max-height: 60vh;
+      display: flex; flex-direction: column; gap: 10px;
+      padding: 12px 14px calc(14px + env(safe-area-inset-bottom));
+      background: linear-gradient(0deg, rgba(8, 10, 26, .99), rgba(12, 14, 34, .96));
+      border-top: 1px solid var(--glass-border);
+      border-radius: 18px 18px 0 0;
+      -webkit-backdrop-filter: blur(20px);
+      backdrop-filter: blur(20px);
+      box-shadow: 0 -18px 50px rgba(0, 0, 0, .6);
+      animation: reacoesSobe .22s ease;
+    }
+    .reacoes[hidden] { display: none !important; }
+    @keyframes reacoesSobe {
+      from { transform: translateY(20px); opacity: 0; }
+      to   { transform: none; opacity: 1; }
+    }
+    .reacoes-topo { display: flex; align-items: center; gap: 10px; }
+    .reacoes-topo strong {
+      font-family: 'JetBrains Mono', monospace; font-size: 10px;
+      letter-spacing: .24em; color: var(--gold);
+    }
+    .reacoes-topo small { flex: 1; font-size: 10.5px; color: var(--muted); }
+    .reacoes-fechar {
+      flex: 0 0 28px; height: 28px; border-radius: 9px;
+      background: rgba(255, 255, 255, .05); border: 1px solid var(--glass-border);
+      color: var(--muted); cursor: pointer; font-size: 12px;
+    }
+    .reacoes-fechar:hover { color: var(--ink); border-color: var(--gold-dim); }
+    .reacoes-grelha {
+      display: grid; gap: 8px;
+      /* Seis por linha no ecrã largo: duas filas certinhas com as 12 expressões. */
+      grid-template-columns: repeat(6, 1fr);
+      overflow-y: auto; padding-bottom: 2px;
+      scrollbar-width: thin; scrollbar-color: var(--gold-dim) transparent;
+    }
+    .reacao {
+      display: flex; flex-direction: column; align-items: center; gap: 4px;
+      padding: 6px 3px; border-radius: 12px;
+      background: var(--panel); border: 1px solid var(--glass-border);
+      color: var(--muted); font-family: 'JetBrains Mono', monospace;
+      font-size: 8px; letter-spacing: .12em; text-transform: uppercase;
+      cursor: pointer;
+      transition: transform .18s, border-color .25s, box-shadow .25s, color .25s;
+    }
+    .reacao canvas { width: 100%; height: auto; max-width: 84px; display: block; }
+    .reacao span {
+      max-width: 100%; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;
+    }
+    .reacao:hover { border-color: var(--gold-dim); transform: translateY(-2px); }
+    .reacao:active { transform: scale(.96); }
+    .reacao[aria-pressed="true"] {
+      border-color: var(--gold); color: var(--gold);
+      box-shadow: 0 0 18px -6px var(--gold-glow);
+    }
+
+    @media (max-width: 520px) {
+      .hero { gap: 12px; }
+      .cara { width: clamp(74px, 12vh, 96px); }
+      .cara-bloco .acao { padding: 6px 10px; letter-spacing: .08em; }
+      .reacoes-grelha { grid-template-columns: repeat(4, 1fr); }
+      .reacao canvas { max-width: 68px; }
+    }
+    @media (max-width: 400px) {
+      .reacoes-grelha { grid-template-columns: repeat(3, 1fr); }
     }
     .hero-kicker {
       font-family: 'JetBrains Mono', monospace;
@@ -449,6 +533,7 @@
 
     <!-- ===== HERO ===== -->
     <header class="hero">
+      <div class="hero-text">
       <p class="hero-kicker">Power Rangers Primal Force</p>
       <div class="hero-row">
         <svg class="hero-seal" width="36" height="36" viewBox="0 0 24 24" aria-hidden="true">
@@ -464,6 +549,15 @@
         <span class="tag"><b>ESTADO</b> Coroa selada</span>
         <span class="tag"><b>REDE</b> Morphin online</span>
         <span class="tag"><b>GUARDIÃO</b> Keeper</span>
+      </div>
+      </div>
+      <!-- Cara do Keeper (cara.js) + o painel de reações -->
+      <div class="cara-bloco">
+        <canvas id="cara" class="cara" width="300" height="280" aria-hidden="true"></canvas>
+        <button id="reacoes-btn" class="acao" type="button" aria-expanded="false" aria-controls="reacoes">
+          <span class="ic" aria-hidden="true">🎭</span>
+          Reações
+        </button>
       </div>
     </header>
 
@@ -497,6 +591,16 @@
 
     <!-- ===== FOOTER ===== -->
     <p class="footer">O Keeper vigia a Coroa. Mensagens processadas pelo Guardiao.</p>
+
+    <!-- ===== PAINEL DE REAÇÕES ===== -->
+    <section id="reacoes" class="reacoes" aria-label="Reações" hidden>
+      <div class="reacoes-topo">
+        <strong>REAÇÕES</strong>
+        <small>Toca numa para a veres na cara do Keeper</small>
+        <button id="reacoes-fechar" class="reacoes-fechar" type="button" aria-label="Fechar reações">✕</button>
+      </div>
+      <div id="reacoes-grelha" class="reacoes-grelha"></div>
+    </section>
   </div>
 
   <!-- ===== SYSTEM PROMPT ===== -->
@@ -556,6 +660,9 @@ do Roro de anos de batalhas (não foi criado por ele).
 Todos sabem que os outros existem e qual é o papel de cada um. Falam sempre
 em português europeu, com "tu".
   </script>
+
+  <!-- ===== CARA (motor comum aos personagens) ===== -->
+  <script src="cara.js"></script>
 
   <!-- ===== APP LOGIC ===== -->
   <script>
@@ -668,7 +775,7 @@ em português europeu, com "tu".
     voiceOn = !voiceOn;
     localStorage.setItem("keeper.voice", voiceOn ? "1" : "0");
     atualizarBotaoVoz();
-    if (!voiceOn) { synth.cancel(); vozPendente = null; }
+    if (!voiceOn) { synth.cancel(); vozPendente = null; cara?.estado("espera"); }
   }
 
   function speak(text, btn, forcar = false) {
@@ -683,9 +790,9 @@ em português europeu, com "tu".
     u.volume = 1.0;
     const v = escolherVozPT();
     if (v) u.voice = v;
-    u.onstart = () => btn?.classList.add("speaking");
-    u.onend = () => btn?.classList.remove("speaking");
-    u.onerror = () => btn?.classList.remove("speaking");
+    u.onstart = () => { btn?.classList.add("speaking"); cara?.estado("falar"); };
+    u.onend = () => { btn?.classList.remove("speaking"); cara?.estado("espera"); };
+    u.onerror = () => { btn?.classList.remove("speaking"); cara?.estado("espera"); };
     synth.speak(u);
   }
 
@@ -706,6 +813,84 @@ em português europeu, com "tu".
     synth.addEventListener("voiceschanged", () => {});
     synth.getVoices();
   }
+
+  // ---------- cara (cara.js) ----------
+  // A cara do Keeper, irmã da do Alpha: olha em volta quando está parado,
+  // medita enquanto espera e fala com a boca enquanto a voz fala.
+  const cara = window.CaraPrimal
+    ? CaraPrimal.criar(document.getElementById("cara"), { variante: "keeper" })
+    : null;
+
+  // ---------- painel de reações (escolher a expressão à mão) ----------
+  // Como o do Alpha: cada azulejo é uma cara parada com a expressão já
+  // aplicada, e tocar nele mostra-a na cara grande do Keeper.
+  const ROTULOS = {
+    feliz: "Feliz!",
+    rir: "A rir!",
+    amor: "Amor!",
+    envergonhado: "Envergonhado...",
+    piscadela: "Piscadela ;)",
+    desconfiado: "Desconfiado...",
+    determinado: "Determinado!",
+    surpreso: "Surpreso!",
+    confuso: "Confuso...",
+    triste: "Triste...",
+    zangado: "Zangado!",
+    sono: "Com sono...",
+  };
+
+  const painelReacoes = $("reacoes");
+  const grelhaReacoes = $("reacoes-grelha");
+  const botaoReacoes = $("reacoes-btn");
+  let grelhaFeita = false;
+
+  function construirGrelha() {
+    if (grelhaFeita || !cara || !window.CaraPrimal) return;
+    grelhaFeita = true;
+    for (const nome of CaraPrimal.expressoes) {
+      const botao = document.createElement("button");
+      botao.type = "button";
+      botao.className = "reacao";
+      botao.title = nome;
+      botao.setAttribute("aria-pressed", "false");
+
+      const miniatura = document.createElement("canvas");
+      miniatura.width = 300;
+      miniatura.height = 280;
+      miniatura.setAttribute("aria-hidden", "true");
+      // Uma cara parada por azulejo (12 a animar ao mesmo tempo seria demais).
+      CaraPrimal.criar(miniatura, { variante: "keeper", estatico: nome, densidade: 1 });
+
+      const rotulo = document.createElement("span");
+      rotulo.textContent = ROTULOS[nome] || nome;
+
+      botao.append(miniatura, rotulo);
+      botao.addEventListener("click", () => escolherReacao(nome, botao));
+      grelhaReacoes.appendChild(botao);
+    }
+  }
+
+  function escolherReacao(nome, botao) {
+    cara?.expressao(nome, 3500);
+    for (const outro of grelhaReacoes.querySelectorAll(".reacao")) {
+      outro.setAttribute("aria-pressed", String(outro === botao));
+    }
+  }
+
+  function abrirReacoes(abrir) {
+    painelReacoes.hidden = !abrir;
+    botaoReacoes.setAttribute("aria-expanded", String(abrir));
+    if (abrir) construirGrelha();
+  }
+
+  botaoReacoes.addEventListener("click", () => abrirReacoes(painelReacoes.hidden));
+  $("reacoes-fechar").addEventListener("click", () => {
+    abrirReacoes(false);
+    botaoReacoes.focus();
+  });
+  document.addEventListener("keydown", (evento) => {
+    if (evento.key === "Escape" && !painelReacoes.hidden) abrirReacoes(false);
+  });
 
   // ---------- messages ----------
   function addBubble(role, content, who) {
@@ -807,6 +992,7 @@ em português europeu, com "tu".
 
     stateBusy = true;
     updateSend();
+    cara?.estado("pensar");
     typingIndicator();
 
     const messages = [{ role: "system", content: systemPrompt() }, ...history];
@@ -828,12 +1014,15 @@ em português europeu, com "tu".
       history.push({ role: "assistant", content: reply || "(resposta vazia)" });
       renderMessages();
       saveHistory();
+      cara?.estado("espera");
+      cara?.humor(reply);
       if (reply) {
         const last = els.messages.querySelector(".msg.keeper:last-child .speak-btn");
         speak(reply, last);
       }
     } catch (err) {
       removeTyping();
+      cara?.estado("espera");
       const msg = err.name === "AbortError"
         ? "O modelo demorou mais de 60 segundos. Tenta de novo mais tarde."
         : "Nao consegui falar com o modelo: " + String(err.message || err);
@@ -849,6 +1038,7 @@ em português europeu, com "tu".
   function resetChat() {
     history = [];
     localStorage.removeItem(HIST_KEY);
+    cara?.estado("espera");
     renderMessages(); updateHeader();
     els.input.focus();
   }
